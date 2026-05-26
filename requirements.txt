@@ -1,0 +1,37 @@
+# Core API
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.6
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# LangChain orchestration
+langchain>=0.1.20
+langchain-community>=0.0.38
+langchain-openai>=0.1.6
+langchain-text-splitters>=0.0.1
+
+# Embeddings & reranking
+sentence-transformers>=2.3.0
+torch>=2.1.0
+rank-bm25>=0.2.2
+
+# Vector DB & cache
+pymilvus>=2.3.6
+redis>=5.0.1
+
+# Document processing
+pypdf>=4.0.0
+python-dotenv>=1.0.0
+
+# Frontend
+streamlit>=1.31.0
+requests>=2.31.0
+
+# Observability
+structlog>=24.1.0
+httpx>=0.26.0
+
+# Utilities
+numpy>=1.26.0
+tenacity>=8.2.0
