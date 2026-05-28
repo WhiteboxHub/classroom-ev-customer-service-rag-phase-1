@@ -38,7 +38,7 @@ graph TD
     Backend -->|Async Tasks| Celery[Celery Workers]
     Celery -->|Broker| Redis
 
-    subgraph Ingestion Connectors
+    subgraph IngestionConnectors["Ingestion Connectors"]
         PDF[PDF Loader]
         S3[S3 Loader]
         Confluence[Confluence]
@@ -46,22 +46,32 @@ graph TD
         Wiki[Wiki Loader]
     end
 
-    Celery --> Ingestion Connectors
+    Celery --> PDF
+    Celery --> S3
+    Celery --> Confluence
 
-    subgraph Guardrails
+    subgraph GuardrailsLayer["Guardrails"]
         HG[Hallucination Guard]
         SF[Safety Filter]
         TG[Threshold Guard]
     end
 
-    Backend --> Guardrails
+    Backend --> HG
+    Backend --> SF
+    Backend --> TG
 
-    subgraph Observability
-        Prometheus -->|Scrape| Backend
-        Grafana -->|Query| Prometheus
-        OTel[OTel Collector] -->|Traces| Jaeger
-        Langfuse -->|LLM Traces| Backend
+    subgraph ObsLayer["Observability"]
+        Prometheus[Prometheus]
+        Grafana[Grafana]
+        OTel[OTel Collector]
+        Jaeger[Jaeger]
+        Langfuse[Langfuse]
     end
+
+    Prometheus -->|Scrape| Backend
+    Grafana -->|Query| Prometheus
+    OTel -->|Traces| Jaeger
+    Langfuse -->|LLM Traces| Backend
 ```
 
 ### Components
