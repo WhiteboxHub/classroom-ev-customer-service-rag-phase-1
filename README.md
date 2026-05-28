@@ -1,158 +1,309 @@
-# EV RAG Platform – Phase 1
+# Classroom EV Customer Service RAG - Phase 1
 
-Enterprise-grade **Retrieval-Augmented Generation** system for EV troubleshooting, aligned with the EV RAG Phase-1 study guide architecture.
+**XYZ EV Corp — Enterprise EV Troubleshooting Agent**
 
-## Capabilities
+This project implements Phase 1 of the Retrieval Augmented Generation (RAG) system for XYZ EV Corp's field technician support platform. It is designed to assist EV service technicians, customer support agents, and fleet operators by providing accurate, context-aware answers derived from internal EV documentation.
 
-- Enterprise document ingestion (PDF, Markdown, text)
-- PDF parsing, preprocessing, metadata enrichment, semantic chunking
-- Sentence Transformer **MiniLM** embeddings
-- **Milvus** vector store (HNSW, cosine similarity, metadata filters)
-- **Semantic + BM25 hybrid retrieval** with reciprocal rank fusion
-- **Cross-encoder reranking** with keyword fallback
-- **OpenAI GPT** grounded generation (RetrievalQA-style orchestration)
-- Multi-turn **conversation memory**
-- **Redis** caching (embeddings, retrieval, chat responses)
-- **FastAPI** REST APIs with logging middleware and latency tracking
-- **Streamlit** troubleshooting chat UI with source citations
-- **Docker Compose** deployment (Milvus, Redis, API, UI)
+---
 
-## Project structure
+## 💡 The Idea
 
+EV field technicians and support agents struggle to find the right diagnostic information quickly across disconnected service manuals, DTC catalogs, firmware changelogs, and charging infrastructure docs. This project unifies these sources into a single, enterprise-grade RAG pipeline.
+
+**Phase 1 Goals:**
+*   **Ingestion**: Process PDFs, Markdown, HTML, S3, Confluence, SharePoint, and Wiki docs into a vector store.
+*   **Retrieval**: Hybrid search (Semantic + BM25) with cross-encoder reranking.
+*   **Generation**: LLM-based grounded answer synthesis with source citations.
+*   **Guardrails**: Hallucination prevention, HV safety disclaimers, confidence thresholds.
+*   **Interface**: Streamlit chat UI + Open-WebUI pipeline for technician interaction.
+
+---
+
+## 🏗 Design & Architecture
+
+The system follows a microservices architecture orchestrated via Docker Compose.
+
+```mermaid
+graph TD
+    User[EV Technician] -->|HTTP/80| Gateway[NGINX Gateway]
+    Gateway -->|/| StreamlitUI[Streamlit Chat UI]
+    Gateway -->|/api| Backend[FastAPI Backend]
+
+    StreamlitUI -->|Internal API| Backend
+
+    Backend -->|Read/Write| DB[(PostgreSQL)]
+    Backend -->|Cache/Queue| Redis[(Redis)]
+    Backend -->|Vectors| Milvus[(Milvus)]
+
+    Backend -->|Async Tasks| Celery[Celery Workers]
+    Celery -->|Broker| Redis
+
+    subgraph Ingestion Connectors
+        PDF[PDF Loader]
+        S3[S3 Loader]
+        Confluence[Confluence]
+        SharePoint[SharePoint]
+        Wiki[Wiki Loader]
+    end
+
+    Celery --> Ingestion Connectors
+
+    subgraph Guardrails
+        HG[Hallucination Guard]
+        SF[Safety Filter]
+        TG[Threshold Guard]
+    end
+
+    Backend --> Guardrails
+
+    subgraph Observability
+        Prometheus -->|Scrape| Backend
+        Grafana -->|Query| Prometheus
+        OTel[OTel Collector] -->|Traces| Jaeger
+        Langfuse -->|LLM Traces| Backend
+    end
 ```
-rag-ev-phase-1/
-├── app/
-│   ├── api/              # FastAPI routes, schemas, middleware
-│   ├── cache/            # Redis caching
-│   ├── core/             # Config, logging, exceptions
-│   ├── embeddings/       # MiniLM embedding service
-│   ├── generation/       # Prompts, LLM, RAG chain
-│   ├── ingestion/        # Parse → preprocess → chunk → index
-│   ├── memory/           # Conversation memory
-│   ├── observability/    # Metrics & tracing callbacks
-│   ├── retrieval/        # Semantic, BM25, hybrid, rerank, RAG service
-│   ├── utils/
-│   └── vectorstore/      # Milvus client
-├── data/sample_ev_docs/  # Sample EV troubleshooting corpus
-├── streamlit_app/        # Enterprise chat UI
-├── scripts/              # CLI utilities
-├── docs/API.md           # API reference
-├── docker-compose.yml
-├── Dockerfile
-└── requirements.txt
+
+### Components
+
+*   **API Gateway (Nginx)**: Entry point for all traffic. Rate limiting, routing, WebSocket support.
+*   **Frontend (Streamlit / Open-WebUI)**: Chat interface for EV troubleshooting interactions.
+*   **Backend (FastAPI)**: Core RAG logic for ingestion, retrieval, reranking, and generation.
+    *   **Services**: Modularized logic — ingestion pipeline, hybrid retriever, RAG orchestrator.
+    *   **Workers**: Celery async tasks — document ingestion, embedding backfill, vector sync.
+    *   **Guardrails**: Hallucination guard, HV safety filter, confidence threshold enforcement.
+    *   **API**: RESTful endpoints for chat, retrieval, ingestion, health, metrics, admin.
+*   **Data Layer**:
+    *   **PostgreSQL**: Relational metadata (documents, DTC catalog, firmware catalog, tenants, sessions).
+    *   **Redis**: Query cache, embedding cache, and Celery message broker.
+    *   **Milvus**: High-performance vector database with HNSW indexing and EV-specific schema.
+
+---
+
+## 📂 Folder Structure
+
+How to navigate the codebase:
+
+```text
+.
+├── app/                        # Core Application
+│   ├── api/                    # FastAPI routes (chat, ingest, admin, health)
+│   ├── core/                   # Config, logging, exceptions
+│   ├── cache/                  # Redis cache layer
+│   ├── embeddings/             # Embedding service (sentence-transformers)
+│   ├── ingestion/              # Ingestion pipeline
+│   │   ├── loaders/            # Document connectors (PDF, HTML, S3, Confluence, SharePoint, Wiki)
+│   │   ├── chunker.py          # EV-domain-aware chunking
+│   │   ├── metadata_extractor.py # DTC, firmware, charging metadata extraction
+│   │   ├── preprocessor.py     # Document preprocessing & cleaning
+│   │   └── pipeline.py         # Orchestrated ingestion flow
+│   ├── retrieval/              # Retrieval pipeline
+│   │   ├── hybrid_retriever.py # Semantic + BM25 fusion
+│   │   ├── reranker.py         # Cross-encoder reranking
+│   │   ├── bm25_retriever.py   # BM25 sparse retrieval
+│   │   ├── query_processor.py  # Query cleaning & expansion
+│   │   └── rag_service.py      # End-to-end RAG orchestrator
+│   ├── vectorstore/            # Milvus vector store client
+│   ├── guardrails/             # Hallucination guard, safety filter, threshold guard
+│   ├── workers/                # Celery async workers (ingestion, embedding, sync)
+│   └── observability/          # Langfuse, OpenTelemetry, Prometheus, in-memory metrics
+├── data/                       # EV Domain Knowledge Base (7 categories)
+│   ├── battery_manuals/        # Battery diagnostics, SoH, thermal management
+│   ├── charging_docs/          # CCS DC, AC Level 2, EVSE troubleshooting
+│   ├── dtc_codes/              # Diagnostic Trouble Code catalog
+│   ├── firmware_updates/       # Firmware changelogs (4.1.0, 4.2.1)
+│   ├── service_manuals/        # HV service procedures, CAN bus troubleshooting
+│   ├── technician_notes/       # Field technician lessons learned
+│   └── ota_release_notes/      # Customer-facing OTA release notes
+├── evaluation/                 # RAGAS Evaluation Framework
+│   ├── datasets/               # Golden evaluation dataset (10 EV queries)
+│   └── runners/                # RAGAS evaluation runner
+├── init_data/                  # Database & Schema Seeds
+│   ├── milvus/                 # Milvus collection schema (17-field EV schema)
+│   ├── postgres/               # PostgreSQL schema + DTC/tenant seed data
+│   └── prompts/                # Role-based system prompt templates
+├── infrastructure/             # Infrastructure as Code
+│   ├── helm/                   # Helm chart (Chart.yaml, values.yaml)
+│   ├── terraform/              # AWS Terraform (EKS, RDS, S3, ElastiCache)
+│   ├── argocd/                 # ArgoCD GitOps application manifest
+│   └── docker/                 # Production Dockerfiles (backend, worker)
+├── observability/              # Ops Observability Configs
+│   ├── prometheus/             # Prometheus scrape config
+│   ├── otel/                   # OpenTelemetry Collector config
+│   └── grafana/                # Grafana datasource provisioning
+├── gateway/                    # Nginx API Gateway config
+├── open-webui/                 # Open-WebUI pipeline adapter
+├── resources/                  # Model registry, prompt registry, tenant config, logging
+├── scripts/                    # Operational scripts
+│   ├── backfill_embeddings.py  # Re-embed after model upgrade
+│   ├── cache_warmup.py         # Pre-warm cache for high-frequency DTC queries
+│   ├── data_quality_checks.py  # Validate corpus metadata & chunk quality
+│   ├── purge_stale_vectors.py  # Remove orphaned Milvus vectors
+│   └── reindex_documents.py    # Full re-ingestion after schema changes
+├── tests/                      # Test suite
+│   └── unit/                   # Unit tests (ingestion, retrieval, reranker)
+├── streamlit_app/              # Streamlit chat interface
+├── docker-compose.yml          # Main application stack
+├── docker-compose.ops.yml      # Observability stack (Prometheus, Grafana, Jaeger, Flower)
+├── Makefile                    # Developer & operator shortcuts
+├── .env.example                # Environment configuration template
+└── README.md                   # This file
 ```
 
-## Quick start (Docker – recommended)
+---
 
-1. **Copy environment file**
-   ```bash
-   cd rag-ev-phase-1
-   copy .env.example .env
-   ```
-   Set `OPENAI_API_KEY` in `.env`.
-
-2. **Start infrastructure and services**
-   ```bash
-   docker compose up -d --build
-   ```
-   Wait until Milvus and API are healthy (~1–2 minutes on first run).
-
-3. **Ingest sample EV dataset**
-   ```bash
-   curl -X POST http://localhost:8000/api/v1/ingest/path -H "Content-Type: application/json" -d "{\"source_path\": \"sample_ev_docs\"}"
-   ```
-
-4. **Open applications**
-   - API docs: http://localhost:8000/docs
-   - Streamlit UI: http://localhost:8501
-
-5. **Example chat request**
-   ```bash
-   curl -X POST http://localhost:8000/api/v1/chat -H "Content-Type: application/json" -d "{\"query\": \"Vehicle not charging after OTA 4.2.1\"}"
-   ```
-
-## Local development (without Docker)
+## 🚀 How to Run
 
 ### Prerequisites
+*   Docker & Docker Compose
+*   Make (optional)
+*   OpenAI API Key
 
-- Python 3.11+
-- Running **Milvus** (standalone) on `localhost:19530`
-- Running **Redis** on `localhost:6379`
-- OpenAI API key
-
-### Setup
-
+### 1. Configuration
+Copy the template and fill in your secrets (OpenAI API Key, database creds).
 ```bash
-cd rag-ev-phase-1
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-copy .env.example .env
+cp .env.example .env
+# Edit .env with your OPENAI_API_KEY
 ```
 
-Start Milvus/Redis via Docker if needed:
+### 2. Start the Stack
+This spins up the Gateway, Backend, Streamlit UI, Databases, Workers, and Observability tools.
 ```bash
-docker compose up -d milvus redis etcd minio
+# Application stack only
+make up
+
+# Full stack with observability (Prometheus, Grafana, Jaeger, Flower)
+make up-ops
+
+# OR manually
+docker compose -f docker-compose.yml -f docker-compose.ops.yml up -d --build
 ```
 
-Run API:
+### 3. Ingest EV Documentation
+Load the sample EV knowledge base into the vector store.
 ```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+make ingest-all
+# OR ingest specific categories
+make ingest-battery
+make ingest-dtc
+make ingest-firmware
 ```
 
-Ingest samples:
+### 4. Access
+*   **Streamlit Chat UI**: [http://localhost:8501](http://localhost:8501)
+*   **API Gateway**: [http://localhost:8080](http://localhost:8080)
+*   **API Documentation**: [http://localhost:8000/docs](http://localhost:8000/docs)
+*   **Grafana Dashboards**: [http://localhost:3001](http://localhost:3001)
+*   **Celery Flower**: [http://localhost:5555](http://localhost:5555)
+*   **Jaeger Traces**: [http://localhost:16686](http://localhost:16686)
+
+---
+
+## 📖 How to Use
+
+### For Developers
+1.  **Ingestion**: `POST /api/v1/ingest/path` — Trigger document processing from a file path.
+2.  **Chat**: `POST /api/v1/chat` — Send a query and get a grounded answer with citations.
+3.  **Retrieve**: `POST /api/v1/retrieve` — Get ranked source chunks without generation.
+4.  **Health**: `GET /api/v1/health` — Check system health (API, Milvus, Redis).
+5.  **Metrics**: `GET /api/v1/metrics` — View retrieval latency, token usage, cache stats.
+
+### For Technicians
+1.  Open the Streamlit Chat UI at [http://localhost:8501](http://localhost:8501).
+2.  Ask questions about DTCs, battery diagnostics, charging issues, or firmware updates.
+3.  Responses include source citations and HV safety warnings where applicable.
+
+### Quick Test
 ```bash
-python scripts/ingest_samples.py
+# Ask about a DTC code
+make chat
+# Retrieve sources for a query
+make retrieve
 ```
 
-Run Streamlit:
+---
+
+## 🧪 How to Test
+
+### Automated Tests
+Run the pytest suite:
 ```bash
-set STREAMLIT_API_URL=http://localhost:8000
-streamlit run streamlit_app/app.py
+make test-local
+# OR inside Docker
+make test
 ```
 
-## API overview
+### Evaluation
+Run RAGAS metrics against the 10-query EV golden dataset:
+```bash
+make eval
+# OR
+python evaluation/runners/ragas_runner.py
+```
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/v1/health` | GET | Health check (Milvus, Redis) |
-| `/api/v1/metrics` | GET | Latency metrics |
-| `/api/v1/ingest/upload` | POST | Upload & ingest document |
-| `/api/v1/ingest/path` | POST | Ingest file or directory |
-| `/api/v1/ingest/documents` | GET | List indexed documents |
-| `/api/v1/retrieve` | POST | Hybrid retrieval only |
-| `/api/v1/chat` | POST | Grounded multi-turn chat |
+### Data Quality
+Validate corpus metadata completeness and chunk distribution:
+```bash
+python scripts/data_quality_checks.py
+```
 
-See [docs/API.md](docs/API.md) for request/response schemas.
+---
 
-## Sample dataset
+## 🚢 How to Deploy
 
-Included under `data/sample_ev_docs/`:
+### Docker Compose (Single Node)
+The provided `docker-compose.yml` is production-ready for single-node deployments. Ensure `.env` is secure and `LOG_LEVEL` is set to `WARNING` in production.
 
-- Charging failure after OTA
-- Battery DTC P0A80
-- DC fast charging (CCS) guide
-- Firmware OTA recovery
-- Infotainment blank screen procedure
+### Kubernetes (Helm)
+For scaling, use the charts in the `infrastructure/helm/` directory.
+1.  Build images and push to registry:
+    ```bash
+    make build && make push
+    ```
+2.  Update `values.yaml` with image tags and secrets.
+3.  Deploy via Helm:
+    ```bash
+    make helm-deploy
+    ```
 
-## Architecture workflow
+### GitOps (ArgoCD)
+For continuous deployment, apply the ArgoCD application manifest:
+```bash
+kubectl apply -f infrastructure/argocd/application.yaml
+```
 
-1. **Ingestion** – PDF/text → clean → metadata → chunk → embed → Milvus + BM25 index  
-2. **Query** – clean → intent metadata → instruction-formatted embedding  
-3. **Retrieval** – Milvus semantic + BM25 → RRF fusion → cross-encoder rerank  
-4. **Generation** – strict grounding prompt → OpenAI GPT → citations  
-5. **Cache** – Redis for retrieval/chat; invalidated on new ingestion  
+---
 
-## Configuration
+## 🛠 Maintenance
 
-All settings are environment-driven (see `.env.example`). Key variables:
+*   **Reindexing**: `python scripts/reindex_documents.py`
+*   **Cache Warmup**: `python scripts/cache_warmup.py`
+*   **Embedding Backfill**: `python scripts/backfill_embeddings.py`
+*   **Purge Stale Vectors**: `python scripts/purge_stale_vectors.py --list`
+*   **Data Quality**: `python scripts/data_quality_checks.py`
+*   **Worker Status**: `make worker-status`
+*   **Postgres Backup**: `docker compose exec postgres pg_dump -U evrag evragdb > backup.sql`
 
-- `OPENAI_API_KEY`, `OPENAI_MODEL`
-- `MILVUS_HOST`, `MILVUS_PORT`, `MILVUS_COLLECTION`
-- `REDIS_HOST`, `CACHE_TTL_SECONDS`
-- `EMBEDDING_MODEL` (default: `sentence-transformers/all-MiniLM-L6-v2`)
-- `CHUNK_SIZE`, `CHUNK_OVERLAP`, `RERANK_TOP_K`
+---
 
-## License
+## 📊 EV Domain Coverage
 
-Internal enterprise prototype – XYZ EV Corp Phase-1 RAG platform.
+| Category | Documents | Key Topics |
+|----------|-----------|------------|
+| Battery Manuals | 3 | SoH diagnostics, thermal management, DTC P0A80, cell voltage spread |
+| Charging Docs | 2 | CCS DC fast charging, AC Level 2 troubleshooting, J1772 pilot signals |
+| DTC Codes | 1 | Full catalog: P0A80, P1E00, P1E10, P0A94, P0A1F, U0100, B2AAA |
+| Firmware Updates | 2 | Firmware 4.1.0 (ATMA v2), 4.2.1 (CCS fix, OTA reliability) |
+| Service Manuals | 2 | HV service procedures, MSD, CAN bus troubleshooting |
+| Technician Notes | 1 | Field lessons learned, MSD common mistakes |
+| OTA Release Notes | 1 | Customer-facing 4.2.1 update notes |
+
+---
+
+## 🔒 Safety & Guardrails
+
+*   **Hallucination Guard**: Detects responses not grounded in retrieved context.
+*   **HV Safety Filter**: Auto-injects high-voltage safety disclaimers for battery/charging procedures.
+*   **Dangerous Query Blocker**: Blocks queries requesting BMS bypass, safety override, etc.
+*   **Threshold Guard**: Returns structured fallback when retrieval confidence is below threshold.
+*   **Tenant Isolation**: Role-based access control (technicians, support, fleet ops, engineers).

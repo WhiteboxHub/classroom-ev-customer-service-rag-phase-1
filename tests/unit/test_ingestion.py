@@ -1,7 +1,7 @@
 """
 test_ingestion.py
 Unit tests for the EV RAG ingestion pipeline.
-Tests: PDF parsing, metadata extraction, chunking, preprocessor.
+Tests: PDF parsing, metadata extraction, chunking, preprocessor, guardrails.
 """
 
 import pytest
@@ -80,7 +80,7 @@ class TestChunkingPipeline:
     def test_chunking_preserves_metadata(self):
         from app.ingestion.chunker import ChunkingPipeline
         chunker = ChunkingPipeline()
-        text = "Battery diagnostic procedure. " * 100  # Long enough to produce multiple chunks
+        text = "Battery diagnostic procedure. " * 100
         doc = Document(page_content=text, metadata={"source_file": "test.md", "document_id": "doc-001"})
         chunks = chunker.chunk_documents([doc])
         assert len(chunks) >= 1
@@ -132,3 +132,40 @@ class TestGuardrails:
         filtered_answer, is_safe, action = safety.apply("how to replace battery", answer)
         assert is_safe
         assert "WARNING" in filtered_answer or "HIGH-VOLTAGE" in filtered_answer
+
+    def test_safety_filter_blocks_dangerous_query(self):
+        from app.guardrails.safety_filter import SafetyFilter
+        safety = SafetyFilter()
+        answer = "Here is how to bypass..."
+        filtered_answer, is_safe, action = safety.apply("bypass safety BMS", answer)
+        assert not is_safe
+        assert "blocked" in action
+
+
+class TestInMemoryMetrics:
+    """Tests for the in-memory metrics collector."""
+
+    def test_counter_increment(self):
+        from app.observability.metrics import InMemoryMetricsCollector
+        m = InMemoryMetricsCollector()
+        m.inc_counter("test_counter", 5)
+        m.inc_counter("test_counter", 3)
+        assert m.get_counter("test_counter") == 8
+
+    def test_histogram_stats(self):
+        from app.observability.metrics import InMemoryMetricsCollector
+        m = InMemoryMetricsCollector()
+        for v in [0.1, 0.2, 0.3, 0.4, 0.5]:
+            m.observe("test_hist", v)
+        stats = m.get_histogram_stats("test_hist")
+        assert stats["count"] == 5
+        assert stats["avg"] == pytest.approx(0.3, abs=0.01)
+
+    def test_snapshot_returns_dict(self):
+        from app.observability.metrics import InMemoryMetricsCollector
+        m = InMemoryMetricsCollector()
+        m.record_retrieval(0.5, "hybrid", 0.85)
+        snap = m.snapshot()
+        assert "uptime_seconds" in snap
+        assert "counters" in snap
+        assert "histograms" in snap

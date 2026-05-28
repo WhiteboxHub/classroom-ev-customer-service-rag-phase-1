@@ -66,10 +66,12 @@ def run_data_quality_checks() -> dict:
         print(f"   {'(no category)':<25} {no_category:>4} docs  *** METADATA MISSING ***")
     
     # Metadata completeness
-    has_vehicle = sum(1 for d in docs if d.get("source_file"))
+    has_source = sum(1 for d in docs if d.get("source_file"))
+    has_firmware = sum(1 for d in docs if d.get("firmware_version"))
     print(f"\n3. METADATA COMPLETENESS")
-    print(f"   Has source_file:     {has_vehicle}/{total_docs} ({100*has_vehicle//max(total_docs,1)}%)")
+    print(f"   Has source_file:     {has_source}/{total_docs} ({100*has_source//max(total_docs,1)}%)")
     print(f"   Has category:        {total_docs - no_category}/{total_docs} ({100*(total_docs-no_category)//max(total_docs,1)}%)")
+    print(f"   Has firmware_ver:    {has_firmware}/{total_docs} ({100*has_firmware//max(total_docs,1)}%)")
     
     # Chunk size assessment
     print(f"\n4. CHUNK DISTRIBUTION")

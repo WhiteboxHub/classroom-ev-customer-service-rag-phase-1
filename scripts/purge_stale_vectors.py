@@ -64,7 +64,7 @@ def list_documents():
     print(f"\nIndexed Documents ({len(docs)} total):")
     print("-" * 80)
     for doc in docs:
-        print(f"  ID: {doc['document_id']:<30} File: {doc['source_file']:<40} Chunks: {doc.get('chunk_count', '?')}")
+        print(f"  ID: {doc['document_id']:<30} File: {doc.get('source_file',''):<40} Chunks: {doc.get('chunk_count', '?')}")
 
 
 if __name__ == "__main__":
