@@ -1,0 +1,82 @@
+[
+  {
+    "id": "ev_q001",
+    "query": "What does DTC code P0A80 mean on an EV battery pack?",
+    "ground_truth": "DTC P0A80 indicates 'Replace Hybrid/EV Battery Pack' — the battery management system has detected that cell capacity has degraded below the replacement threshold (typically below 70-80% state of health). Immediate inspection of individual cell voltages, temperature sensors, and BMS logs is required. The battery pack may need full replacement.",
+    "contexts": ["battery_dtc_p0a80.md", "battery_manuals/ev_battery_diagnostics_guide.md"],
+    "category": "battery",
+    "difficulty": "medium"
+  },
+  {
+    "id": "ev_q002",
+    "query": "Vehicle stopped charging after OTA firmware update 4.2.1. How to recover?",
+    "ground_truth": "After OTA 4.2.1, charging failures may occur due to EVSE handshake protocol changes. Steps: 1) Perform a hard reset by holding power button 10s. 2) Check if firmware version shows 4.2.1 in Settings > About. 3) If firmware is partially applied, navigate to Settings > Software > Retry Update. 4) For CCS DC charging, check J1772 pilot signal. 5) If charging is still unavailable after rollback attempt, use Diagnostic Mode via OBD-II to read U0100 codes.",
+    "contexts": ["charging_failure_after_ota.md", "firmware_ota_recovery.md"],
+    "category": "firmware",
+    "difficulty": "hard"
+  },
+  {
+    "id": "ev_q003",
+    "query": "What is the correct CCS DC fast charging procedure for EV-3000?",
+    "ground_truth": "CCS (Combined Charging System) DC fast charging for EV-3000: 1) Ensure vehicle SoC is between 5-80% for optimal charging speed. 2) Connect CCS2 plug to charge port — lock will engage automatically. 3) Vehicle communicates EVSE max current via PLC (ISO 15118). 4) Charging begins within 30 seconds. 5) Target charging rate: 150kW peak (EV-3000 platform). 6) Charging automatically tapers above 80% SoC. 7) Error code P1E00 indicates EVSE communication failure.",
+    "contexts": ["dc_fast_charging_ccs_guide.md", "charging_docs/ccs_charging_procedure.md"],
+    "category": "charging",
+    "difficulty": "easy"
+  },
+  {
+    "id": "ev_q004",
+    "query": "Battery thermal warning BMS_TEMP_HIGH triggered. What are the safety steps?",
+    "ground_truth": "BMS_TEMP_HIGH thermal warning procedure: 1) IMMEDIATELY stop charging if charging is in progress. 2) Do NOT drive the vehicle until thermal event is resolved. 3) Move vehicle to a ventilated area away from structures. 4) Check ambient temperature — if above 40°C, allow vehicle to cool. 5) Check coolant level in thermal management system. 6) Read full BMS fault logs via OBD-II diagnostic tool. 7) If temperature exceeds 60°C in cells, call emergency response — battery thermal runaway risk. 8) Do not attempt self-repair on HV battery thermal system.",
+    "contexts": ["battery_manuals/thermal_management_guide.md", "service_manuals/ev_safety_procedures.md"],
+    "category": "battery",
+    "difficulty": "hard"
+  },
+  {
+    "id": "ev_q005",
+    "query": "OTA update failed with error OTA_INSTALL_FAIL_3. How to recover?",
+    "ground_truth": "OTA_INSTALL_FAIL_3 indicates a firmware validation checksum mismatch. Recovery steps: 1) Navigate to Settings > Software Update > Retry. 2) If retry fails, perform a factory-safe reboot: hold Power + Volume Down for 15 seconds. 3) Connect to WiFi with stable signal strength above -70dBm. 4) Re-download firmware from Settings > Software > Check for Updates. 5) If the vehicle is stuck in update mode, connect to OEM diagnostic portal for forced rollback to previous firmware version. 6) Do not disconnect power during recovery.",
+    "contexts": ["firmware_ota_recovery.md", "ota_release_notes/ota_4_2_1_release_notes.md"],
+    "category": "firmware",
+    "difficulty": "hard"
+  },
+  {
+    "id": "ev_q006",
+    "query": "What does DTC U0100 mean and how to fix it?",
+    "ground_truth": "DTC U0100 means 'Lost Communication With ECM/PCM A'. On an EV, this typically indicates a CAN bus communication failure between the vehicle control module and the battery management system or charging controller. Steps: 1) Check CAN bus connectors for corrosion or damage. 2) Inspect EV junction box wiring harness. 3) Clear DTC and perform ignition cycle test. 4) If persistent, the VCM (Vehicle Control Module) firmware may need re-flashing. 5) Check for pending OTA updates that may include CAN protocol fixes.",
+    "contexts": ["dtc_codes/dtc_catalog.md", "service_manuals/can_bus_troubleshooting.md"],
+    "category": "diagnostics",
+    "difficulty": "medium"
+  },
+  {
+    "id": "ev_q007",
+    "query": "How to perform a manual service disconnect on EV high-voltage battery?",
+    "ground_truth": "WARNING: HIGH-VOLTAGE PROCEDURE — Certified EV Technicians Only. Manual Service Disconnect (MSD) procedure: 1) Power off vehicle completely and remove key fob. 2) Wait 5 minutes for capacitors to discharge. 3) Wear HV-rated insulated gloves (Class 0, 1000V minimum) and face shield. 4) Open rear trunk/frunk access panel using T40 Torx socket. 5) Locate orange MSD handle — do NOT touch adjacent HV cables. 6) Pull MSD handle upward firmly to disengage. 7) Verify HV isolation with CAT III multimeter — should read <60V DC. 8) Tag out with LOTO (Lock Out Tag Out) device before proceeding.",
+    "contexts": ["service_manuals/ev_hv_service_procedures.md", "technician_notes/msd_procedure_notes.md"],
+    "category": "service",
+    "difficulty": "hard"
+  },
+  {
+    "id": "ev_q008",
+    "query": "What firmware version introduced the improved thermal management algorithm?",
+    "ground_truth": "Firmware version 4.1.0 introduced the improved adaptive thermal management algorithm (ATMA v2). Key improvements: Dynamic coolant pump speed control based on predicted load. Pre-conditioning battery to optimal temperature range (20-35°C) before DC fast charging. Improved BMS cell balancing during thermal events. The 4.1.0 release also resolved DTC P0A80 false positive triggers in cold weather below -10°C.",
+    "contexts": ["firmware_updates/firmware_4_1_0_changelog.md", "ota_release_notes/ota_4_1_0_release_notes.md"],
+    "category": "firmware",
+    "difficulty": "medium"
+  },
+  {
+    "id": "ev_q009",
+    "query": "AC Level 2 charging not starting. Pilot signal shows error.",
+    "ground_truth": "AC Level 2 charging pilot signal errors: 1) Check J1772 pilot signal voltage — should oscillate between +12V and -12V. 2) Pilot stuck at +12V indicates EVSE is not detecting vehicle connection. Check charge port latch sensor. 3) Pilot at 0V indicates EVSE fault — check EVSE breaker and GFCI. 4) Check OBC (On-Board Charger) fuse in the EV junction box. 5) DTC P1E10 indicates OBC communication failure. 6) Verify EVSE is SAE J1772 compliant. 7) If using a new EVSE, check for Pilot PWM compatibility (min 6% duty cycle for 16A EVSE).",
+    "contexts": ["charging_docs/ac_level2_troubleshooting.md", "dtc_codes/dtc_catalog.md"],
+    "category": "charging",
+    "difficulty": "medium"
+  },
+  {
+    "id": "ev_q010",
+    "query": "How to perform State of Health (SOH) battery diagnostic?",
+    "ground_truth": "EV Battery State of Health (SOH) diagnostic procedure: 1) Connect OEM diagnostic tool or approved OBD-II interface. 2) Navigate to BMS > Battery Health > SOH Analysis. 3) System will run full cell capacity test (requires 30-45 minutes with ~20% SoC). 4) SOH >80%: Normal operation. 5) SOH 70-80%: Schedule battery reconditioning service. 6) SOH <70%: Battery replacement recommended (triggers DTC P0A80). 7) Check individual cell voltage spread — more than 0.1V difference indicates cell degradation. 8) Export BMS log file for warranty claim documentation.",
+    "contexts": ["battery_manuals/battery_soh_diagnostic.md", "service_manuals/bms_diagnostic_procedures.md"],
+    "category": "battery",
+    "difficulty": "medium"
+  }
+]

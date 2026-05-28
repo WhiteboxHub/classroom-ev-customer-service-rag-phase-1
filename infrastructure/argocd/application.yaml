@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ev-rag-platform
+  namespace: argocd
+  labels:
+    app: ev-rag-platform
+    team: ev-platform-engineering
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/xyz-ev-corp/ev-rag-platform.git'
+    targetRevision: main
+    path: infrastructure/helm/ev-rag-chart
+    helm:
+      valueFiles:
+        - values.yaml
+      parameters:
+        - name: image.tag
+          value: "1.0.0"
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: ev-rag
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PruneLast=true
+  revisionHistoryLimit: 5

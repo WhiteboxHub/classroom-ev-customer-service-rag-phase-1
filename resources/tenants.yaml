@@ -1,0 +1,47 @@
+# ========================================================
+# EV RAG Platform — Tenant Configuration
+# Defines access levels and retrieval permissions per tenant
+# ========================================================
+
+tenants:
+  ev_technicians:
+    name: EV Field Technicians
+    access_level: full
+    retrieval_permissions:
+      - service_manuals
+      - dtc_codes
+      - technician_notes
+      - firmware_updates
+      - battery_manuals
+      - charging_docs
+      - ota_release_notes
+    hv_procedures_allowed: true
+    system_prompt: technician_mode
+
+  ev_support_tier1:
+    name: EV Customer Support Tier 1
+    access_level: standard
+    retrieval_permissions:
+      - dtc_codes
+      - charging_docs
+      - ota_release_notes
+    hv_procedures_allowed: false
+    system_prompt: customer_support_tier1
+
+  ev_fleet_ops:
+    name: EV Fleet Operations
+    access_level: standard
+    retrieval_permissions:
+      - firmware_updates
+      - ota_release_notes
+      - charging_docs
+    hv_procedures_allowed: false
+    system_prompt: fleet_ops_mode
+
+  ev_engineers:
+    name: EV Platform Engineers
+    access_level: admin
+    retrieval_permissions:
+      - all
+    hv_procedures_allowed: true
+    system_prompt: default

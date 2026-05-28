@@ -1,0 +1,23 @@
+# See init_data/prompts/system_prompts.yaml for full prompt content
+# This file is a reference/registry for prompt management
+
+prompt_registry:
+  default:
+    file: init_data/prompts/system_prompts.yaml
+    key: system_prompts.default
+    version: "1.0"
+
+  technician:
+    file: init_data/prompts/system_prompts.yaml
+    key: system_prompts.technician_mode
+    version: "1.0"
+
+  customer_support:
+    file: init_data/prompts/system_prompts.yaml
+    key: system_prompts.customer_support_tier1
+    version: "1.0"
+
+  fleet_ops:
+    file: init_data/prompts/system_prompts.yaml
+    key: system_prompts.fleet_ops_mode
+    version: "1.0"
