@@ -13,7 +13,7 @@ EV field technicians and support agents struggle to find the right diagnostic in
 **Phase 1 Goals:**
 *   **Ingestion**: Process PDFs, Markdown, HTML, S3, Confluence, SharePoint, and Wiki docs into a vector store.
 *   **Retrieval**: Hybrid search (Semantic + BM25) with cross-encoder reranking.
-*   **Generation**: LLM-based grounded answer synthesis with source citations.
+*   **Generation**: LLM-based grounded answer synthesis with source citations (Groq or OpenAI).
 *   **Guardrails**: Hallucination prevention, HV safety disclaimers, confidence thresholds.
 *   **Interface**: Streamlit chat UI + Open-WebUI pipeline for technician interaction.
 
@@ -79,6 +79,7 @@ graph TD
 *   **API Gateway (Nginx)**: Entry point for all traffic. Rate limiting, routing, WebSocket support.
 *   **Frontend (Streamlit / Open-WebUI)**: Chat interface for EV troubleshooting interactions.
 *   **Backend (FastAPI)**: Core RAG logic for ingestion, retrieval, reranking, and generation.
+    *   **LLM providers**: Auto-selects **Groq** (free tier) when `GROQ_API_KEY` is set; otherwise **OpenAI** via `OPENAI_API_KEY` (`app/generation/llm_service.py`).
     *   **Services**: Modularized logic — ingestion pipeline, hybrid retriever, RAG orchestrator.
     *   **Workers**: Celery async tasks — document ingestion, embedding backfill, vector sync.
     *   **Guardrails**: Hallucination guard, HV safety filter, confidence threshold enforcement.
@@ -167,14 +168,51 @@ How to navigate the codebase:
 ### Prerequisites
 *   Docker & Docker Compose
 *   Make (optional)
-*   OpenAI API Key
+*   **LLM API key** (at least one):
+    *   **[Groq](https://console.groq.com)** — recommended for local/classroom use (free tier, fast inference)
+    *   **[OpenAI](https://platform.openai.com)** — optional fallback
 
 ### 1. Configuration
-Copy the template and fill in your secrets (OpenAI API Key, database creds).
+Copy the template and configure an LLM provider plus database settings.
 ```bash
 cp .env.example .env
-# Edit .env with your OPENAI_API_KEY
 ```
+
+#### LLM provider (Groq or OpenAI)
+
+The backend picks a provider automatically from your `.env` keys:
+
+| Priority | Provider | When it is used |
+|----------|----------|-----------------|
+| 1 | **Groq** | `GROQ_API_KEY` is set and not a placeholder |
+| 2 | **OpenAI** | No valid Groq key, but `OPENAI_API_KEY` is set |
+
+**Option A — Groq (recommended, free tier)**
+
+1. Create an API key at [console.groq.com](https://console.groq.com).
+2. Add to `.env`:
+
+```bash
+GROQ_API_KEY=gsk_your-groq-key-here
+GROQ_MODEL=llama-3.3-70b-versatile
+OPENAI_TEMPERATURE=0.1
+```
+
+Default model: `llama-3.3-70b-versatile`. Other Groq chat models can be used by changing `GROQ_MODEL`.
+
+**Option B — OpenAI**
+
+Comment out or remove `GROQ_API_KEY`, then set:
+
+```bash
+OPENAI_API_KEY=sk-your-openai-key-here
+OPENAI_MODEL=gpt-4o-mini
+OPENAI_TEMPERATURE=0.1
+```
+
+If neither key is configured, chat/generation endpoints return an error asking you to set `GROQ_API_KEY` or `OPENAI_API_KEY`.
+
+> **Note:** This project uses the **Groq** inference API (`langchain-groq`), not the xAI **Grok** API. Embeddings and reranking still run locally via `sentence-transformers` / cross-encoder models — only answer **generation** uses Groq or OpenAI.
 
 ### 2. Start the Stack
 This spins up the Gateway, Backend, Streamlit UI, Databases, Workers, and Observability tools.
@@ -222,6 +260,15 @@ make ingest-firmware
 1.  Open the Streamlit Chat UI at [http://localhost:8501](http://localhost:8501).
 2.  Ask questions about DTCs, battery diagnostics, charging issues, or firmware updates.
 3.  Responses include source citations and HV safety warnings where applicable.
+
+### Verify LLM provider
+After `make up`, check backend logs for the active provider:
+
+```bash
+docker compose logs backend | findstr llm_provider_initialized
+```
+
+You should see `provider=groq` or `provider=openai` with the model name in use.
 
 ### Quick Test
 ```bash
