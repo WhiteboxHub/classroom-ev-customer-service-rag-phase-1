@@ -28,6 +28,22 @@ class Settings(BaseSettings):
     openai_temperature: float = Field(default=0.1, alias="OPENAI_TEMPERATURE")
 
     # ──────────────────────────────────────────────────────────
+    # Groq (free tier available)
+    # ──────────────────────────────────────────────────────────
+    groq_api_key: str = Field(default="", alias="GROQ_API_KEY")
+    groq_model: str = Field(default="llama-3.3-70b-versatile", alias="GROQ_MODEL")
+
+    @property
+    def llm_provider(self) -> str:
+        """Auto-detect LLM provider: prefer Groq (free) over OpenAI."""
+        if self.groq_api_key and self.groq_api_key not in ("", "your-groq-key-here"):
+            return "groq"
+        if self.openai_api_key and self.openai_api_key not in ("", "sk-your-openai-key-here"):
+            return "openai"
+        return "none"
+
+
+    # ──────────────────────────────────────────────────────────
     # Milvus Vector Store
     # ──────────────────────────────────────────────────────────
     milvus_host: str = Field(default="localhost", alias="MILVUS_HOST")

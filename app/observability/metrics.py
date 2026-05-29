@@ -8,8 +8,9 @@ Used as a fallback and for API /metrics endpoint.
 import time
 import threading
 from collections import defaultdict
+from contextlib import contextmanager
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Generator, List, Optional
 
 from app.core.logging import get_logger
 
@@ -145,11 +146,32 @@ class InMemoryMetricsCollector:
     def record_hallucination_blocked(self) -> None:
         self.inc_counter("hallucination_blocked_total")
 
+    @contextmanager
+    def track(self, operation: str) -> Generator[None, None, None]:
+        """
+        Context manager that times the wrapped block and records latency
+        and request count for the given operation name.
+
+        Usage::
+
+            with metrics_collector.track("retrieval"):
+                ...
+        """
+        start = time.perf_counter()
+        try:
+            yield
+        finally:
+            elapsed_s = time.perf_counter() - start
+            self.observe(f"{operation}_latency_seconds", elapsed_s)
+            self.inc_counter(f"{operation}_requests_total")
+
+
     # ──────────────────────────────────────────────────────────
     # Export / API
     # ──────────────────────────────────────────────────────────
 
     def snapshot(self) -> Dict[str, Any]:
+
         """
         Return a full metrics snapshot for the /api/v1/metrics endpoint.
         """

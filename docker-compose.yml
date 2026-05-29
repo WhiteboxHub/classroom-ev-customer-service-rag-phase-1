@@ -242,3 +242,4 @@ volumes:
 networks:
   default:
     name: ev-rag-network
+    external: true

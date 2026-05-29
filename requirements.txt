@@ -9,6 +9,7 @@ pydantic-settings>=2.1.0
 langchain>=0.1.20
 langchain-community>=0.0.38
 langchain-openai>=0.1.6
+langchain-groq>=0.1.0
 langchain-text-splitters>=0.0.1
 
 # Embeddings & reranking
@@ -19,6 +20,8 @@ rank-bm25>=0.2.2
 # Vector DB & cache
 pymilvus>=2.3.6
 redis>=5.0.1
+celery>=5.3.0
+
 
 # Document processing
 pypdf>=4.0.0

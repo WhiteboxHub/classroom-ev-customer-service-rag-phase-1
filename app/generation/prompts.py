@@ -1,6 +1,6 @@
 """LangChain prompt templates for grounded EV troubleshooting generation."""
 
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.prompts import ChatPromptTemplate
 
 EV_SYSTEM_PROMPT = """You are an enterprise EV troubleshooting assistant for XYZ EV Corp customer support.
 
@@ -27,7 +27,6 @@ Provide grounded troubleshooting guidance with source citations."""
 CHAT_PROMPT = ChatPromptTemplate.from_messages(
     [
         ("system", EV_SYSTEM_PROMPT),
-        MessagesPlaceholder(variable_name="history", optional=True),
         ("human", EV_HUMAN_PROMPT),
     ]
 )
