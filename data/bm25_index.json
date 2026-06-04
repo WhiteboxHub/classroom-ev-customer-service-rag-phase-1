@@ -1,0 +1,1072 @@
+[
+  {
+    "chunk_id": "chunk_e53114362c7e",
+    "text": "# Battery State of Health (SoH) Diagnostic Procedure\n**Document:** SOH-DIAG-002 | **Version:** 2.1 | **Platform:** EV-3000, EV-5000, EV-7000\n\n## Purpose\nThis procedure defines the standard method for assessing EV battery State of Health (SoH) for warranty determination, service planning, and fleet management.\n\n## Prerequisites\n- Approved OBD-II interface (XYZ DiagTool Pro v2.0+)\n- Vehicle SoC: 15-25% (test will fail if SoC >40%)\n- Ambient temperature: 10-35°C\n- Vehicle must not have been driven in the last 30 minutes",
+    "document_id": "doc_ac3a5dfc2098",
+    "source_file": "battery_soh_diagnostic.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.1",
+      "charging_type": "ACLEVEL2",
+      "source": "/app/data/battery_manuals/battery_soh_diagnostic.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_d59345c42e03",
+    "text": "## Procedure Steps\n\n### Step 1: Pre-Test Inspection\n1. Check for active DTCs — clear non-critical DTCs before test\n2. Verify coolant level is at MIN line or above\n3. Confirm firmware version is 4.0.0 or later\n4. Ensure vehicle is plugged into AC Level 2 EVSE for the test duration\n\n### Step 2: Initiate SoH Test\n1. Connect DiagTool Pro and navigate to: Battery > Health Assessment > Start SoH Test\n2. Confirm pre-conditions are met (green checkmarks on all pre-test items)\n3. Press **Start Test** — test runs automatically for 35-50 minutes",
+    "document_id": "doc_ac3a5dfc2098",
+    "source_file": "battery_soh_diagnostic.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.1",
+      "charging_type": "ACLEVEL2",
+      "source": "/app/data/battery_manuals/battery_soh_diagnostic.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_1b8acb946a67",
+    "text": "### Step 3: Results Interpretation\nAfter test completion, review:\n- **Measured Capacity (kWh):** Actual available capacity\n- **SoH Percentage:** Measured / Nominal × 100\n- **Cell Spread:** Max - Min cell voltage\n- **Temperature Delta:** Max - Min cell temperature during test\n- **Cycle Count:** Total charge cycles (from BMS lifetime log)\n\n### Step 4: Documentation\n1. Export full test report: Test Complete > Export PDF\n2. Log document ID and test date in service management system\n3. If SoH < 70%, initiate warranty claim process",
+    "document_id": "doc_ac3a5dfc2098",
+    "source_file": "battery_soh_diagnostic.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.1",
+      "charging_type": "ACLEVEL2",
+      "source": "/app/data/battery_manuals/battery_soh_diagnostic.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_b8a67fc84c79",
+    "text": "## Expected Values by Mileage\n| Mileage (miles) | Expected SoH Range |\n|-----------------|--------------------|\n| 0 - 20,000 | 95-100% |\n| 20,000 - 50,000 | 88-95% |\n| 50,000 - 100,000 | 80-90% |\n| 100,000 - 150,000 | 72-85% |\n| 150,000+ | 65-80% |",
+    "document_id": "doc_ac3a5dfc2098",
+    "source_file": "battery_soh_diagnostic.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.1",
+      "charging_type": "ACLEVEL2",
+      "source": "/app/data/battery_manuals/battery_soh_diagnostic.md",
+      "file_type": "md",
+      "chunk_index": 3
+    }
+  },
+  {
+    "chunk_id": "chunk_9db6524fbf72",
+    "text": "# EV Battery Diagnostics Guide — XYZ EV Corp\n**Document Version:** 3.2.1 | **Firmware Compatibility:** 4.0.x - 4.2.x | **Platform:** EV-3000, EV-5000\n\n## Overview\nThis guide covers comprehensive battery diagnostics for XYZ EV Corp platforms. The Battery Management System (BMS) continuously monitors cell voltage, temperature, state of charge (SoC), and state of health (SoH).",
+    "document_id": "doc_a2ac23633ff0",
+    "source_file": "ev_battery_diagnostics_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "3.2.1",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/battery_manuals/ev_battery_diagnostics_guide.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_cdc7540fc1fe",
+    "text": "## 1. Battery Pack Architecture\n\n### 1.1 Cell Configuration\n- **Cell Chemistry:** Lithium Nickel Manganese Cobalt Oxide (NMC 811)\n- **Cell Voltage Range:** 3.0V (min) — 4.2V (max), nominal 3.6V\n- **Pack Configuration:** EV-3000: 108S4P | EV-5000: 120S4P\n- **Pack Voltage:** EV-3000: 388.8V nominal | EV-5000: 432V nominal\n- **Pack Capacity:** EV-3000: 82kWh | EV-5000: 100kWh\n\n### 1.2 Thermal Management\n- Liquid cooling system with dedicated EV coolant loop\n- Operating temperature range: -30°C to +55°C\n- Optimal charging temperature: 15°C to 40°C\n- Optimal performance temperature: 20°C to 35°C",
+    "document_id": "doc_a2ac23633ff0",
+    "source_file": "ev_battery_diagnostics_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "3.2.1",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/battery_manuals/ev_battery_diagnostics_guide.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_e3912dda4d2b",
+    "text": "## 2. State of Health (SoH) Diagnostics\n\n### 2.1 SoH Assessment Procedure\n1. Connect approved OBD-II diagnostic tool (XYZ DiagTool Pro v2.x or later)\n2. Navigate to: **BMS > Battery Health > SoH Analysis**\n3. Ensure vehicle SoC is between 15-25% before starting test\n4. Run Full Capacity Test (30-45 minutes)\n5. System charges to 100% SoC then discharges to 10% under controlled load\n6. BMS calculates actual capacity vs nominal capacity",
+    "document_id": "doc_a2ac23633ff0",
+    "source_file": "ev_battery_diagnostics_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "3.2.1",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/battery_manuals/ev_battery_diagnostics_guide.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_eb3b6a0ce9e4",
+    "text": "### 2.2 SoH Interpretation\n| SoH Range | Status | Action Required |\n|-----------|--------|-----------------|\n| 90-100% | Excellent | No action required |\n| 80-90% | Good | Monitor during next service |\n| 70-80% | Fair | Schedule reconditioning service |\n| 60-70% | Poor | Battery replacement recommended (DTC P0A80) |\n| <60% | Critical | Immediate battery replacement required |\n\n### 2.3 Cell Voltage Spread Analysis\n- **Acceptable spread:** < 0.05V across all cells\n- **Caution threshold:** 0.05V - 0.1V spread\n- **Replacement trigger:** > 0.1V spread between highest and lowest cell voltage\n- Access via: BMS > Cell Diagnostics > Individual Cell Voltages",
+    "document_id": "doc_a2ac23633ff0",
+    "source_file": "ev_battery_diagnostics_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "3.2.1",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/battery_manuals/ev_battery_diagnostics_guide.md",
+      "file_type": "md",
+      "chunk_index": 3
+    }
+  },
+  {
+    "chunk_id": "chunk_c78425c8fc02",
+    "text": "## 3. DTC P0A80 — Replace Hybrid/EV Battery Pack\n\n### 3.1 Trigger Conditions\nDTC P0A80 is set when:\n- SoH drops below 70% threshold\n- Cell voltage spread exceeds 0.15V\n- BMS detects irreversible capacity loss pattern\n- Battery pack fails the Full Capacity Test\n\n### 3.2 Diagnostic Steps\n**Step 1:** Connect OBD-II tool and read all pending/active DTCs\n**Step 2:** Export BMS log file (BMS > Logs > Export > USB)\n**Step 3:** Verify SoH reading (should show <70%)\n**Step 4:** Check individual cell voltages for outliers\n**Step 5:** Inspect cooling system for blockages or coolant leaks\n**Step 6:** If cooling is intact and SoH <70%, proceed with warranty/replacement claim",
+    "document_id": "doc_a2ac23633ff0",
+    "source_file": "ev_battery_diagnostics_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "3.2.1",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/battery_manuals/ev_battery_diagnostics_guide.md",
+      "file_type": "md",
+      "chunk_index": 4
+    }
+  },
+  {
+    "chunk_id": "chunk_35035825345b",
+    "text": "### 3.3 Firmware Consideration\nFirmware 4.1.0 resolved false-positive P0A80 triggers in temperatures below -10°C. If vehicle is running firmware <4.1.0 and DTC appears in cold weather, update firmware first and retest.",
+    "document_id": "doc_a2ac23633ff0",
+    "source_file": "ev_battery_diagnostics_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "3.2.1",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/battery_manuals/ev_battery_diagnostics_guide.md",
+      "file_type": "md",
+      "chunk_index": 5
+    }
+  },
+  {
+    "chunk_id": "chunk_6310a6c630cd",
+    "text": "## 4. Thermal Warning Events\n\n### 4.1 BMS_TEMP_HIGH Warning\n**Trigger:** Cell temperature > 55°C\n**Immediate Actions:**\n1. STOP charging immediately if charging is active\n2. Do NOT drive the vehicle\n3. Move to ventilated area away from structures\n4. Check ambient temperature — allow cooling if > 40°C ambient\n5. Check coolant level and inspect for leaks\n6. Read BMS fault log for thermal event timeline\n7. If cell temperature exceeds 65°C — call emergency services (thermal runaway risk)",
+    "document_id": "doc_a2ac23633ff0",
+    "source_file": "ev_battery_diagnostics_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "3.2.1",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/battery_manuals/ev_battery_diagnostics_guide.md",
+      "file_type": "md",
+      "chunk_index": 6
+    }
+  },
+  {
+    "chunk_id": "chunk_257c00fb112a",
+    "text": "### 4.2 BMS_TEMP_LOW Warning\n**Trigger:** Cell temperature < -15°C\n**Actions:**\n1. Enable battery pre-conditioning (Settings > Charging > Pre-Conditioning)\n2. Allow 15-20 minutes warm-up before DC fast charging\n3. Use AC Level 2 charging only until cells reach > 5°C\n4. Range reduction of 20-35% is normal at -15°C",
+    "document_id": "doc_a2ac23633ff0",
+    "source_file": "ev_battery_diagnostics_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "3.2.1",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/battery_manuals/ev_battery_diagnostics_guide.md",
+      "file_type": "md",
+      "chunk_index": 7
+    }
+  },
+  {
+    "chunk_id": "chunk_6516ff11cce2",
+    "text": "## 5. Battery Reconditioning Service\n**Service Interval:** When SoH reaches 75-80%\n**Procedure Duration:** 4-6 hours\n**Process:**\n1. Full discharge to 5% SoC under controlled load\n2. 2-hour rest period at ambient temperature\n3. Controlled slow charge at 0.2C rate to 100% SoC\n4. BMS cell balancing cycle (automated)\n5. Final SoH assessment\n**Expected improvement:** 3-8% SoH recovery",
+    "document_id": "doc_a2ac23633ff0",
+    "source_file": "ev_battery_diagnostics_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "3.2.1",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/battery_manuals/ev_battery_diagnostics_guide.md",
+      "file_type": "md",
+      "chunk_index": 8
+    }
+  },
+  {
+    "chunk_id": "chunk_caf84d7a1d77",
+    "text": "# EV Thermal Management System Guide\n**Document:** TMS-003 | **Version:** 1.4 | **Firmware:** 4.1.0+\n\n## System Overview\nThe XYZ EV Corp Thermal Management System (TMS) maintains battery pack temperature within the optimal operating window using:\n- Liquid cooling loop with dedicated EV-grade coolant (XYZ CoolFluid G48)\n- Variable-speed coolant pump (150-3500 RPM)\n- Chiller unit for active cooling (driven by A/C compressor)\n- PTC heater for cold-weather pre-conditioning\n- Adaptive Thermal Management Algorithm (ATMA v2 — introduced in firmware 4.1.0)",
+    "document_id": "doc_be68b50c533d",
+    "source_file": "thermal_management_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "1.4",
+      "charging_type": "DCFAST",
+      "source": "/app/data/battery_manuals/thermal_management_guide.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_832ea118715f",
+    "text": "## ATMA v2 Improvements (Firmware 4.1.0)\n- Dynamic pump speed based on predicted thermal load from drive profile\n- Pre-conditioning battery to 20-30°C before DC fast charging starts\n- Predictive cooling during regenerative braking\n- Improved cell balancing during thermal events\n\n## Coolant Specifications\n- **Type:** XYZ CoolFluid G48 (ethylene glycol-based, orange color)\n- **Concentration:** 50% coolant / 50% distilled water\n- **Change interval:** Every 5 years or 100,000 miles\n- **Capacity:** EV-3000: 8.5L | EV-5000: 10.2L\n- **DO NOT** use standard automotive coolant — will damage EV-specific seals",
+    "document_id": "doc_be68b50c533d",
+    "source_file": "thermal_management_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "1.4",
+      "charging_type": "DCFAST",
+      "source": "/app/data/battery_manuals/thermal_management_guide.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_d02e6441035b",
+    "text": "## Thermal Warning Thresholds\n| Parameter | Warning | Critical | Emergency |\n|-----------|---------|----------|----------|\n| Cell Temp High | 50°C | 58°C | 65°C |\n| Cell Temp Low | -10°C | -20°C | N/A |\n| Coolant Temp | 55°C | 65°C | 70°C |\n| Temp Delta | 8°C | 12°C | 15°C |",
+    "document_id": "doc_be68b50c533d",
+    "source_file": "thermal_management_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "XYZ EV",
+      "firmware_version": "1.4",
+      "charging_type": "DCFAST",
+      "source": "/app/data/battery_manuals/thermal_management_guide.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_34ef5e29093c",
+    "text": "# AC Level 2 Charging Troubleshooting Guide\n**Document:** CHG-AC-002 | **Version:** 1.8 | **Platform:** All EV Platforms\n\n## Overview\nAC Level 2 charging uses the J1772 / IEC 62196 Type 2 standard. The On-Board Charger (OBC) converts AC power to DC for battery charging.\n\n## On-Board Charger Specifications\n- **EV-3000 OBC:** 11.5kW (single-phase 32A) or 22kW (three-phase 32A)\n- **EV-5000 OBC:** 22kW (three-phase 32A)\n- **Input voltage:** 100-240V AC single-phase | 200-480V AC three-phase\n- **Frequency:** 50-60Hz",
+    "document_id": "doc_f15020d9230f",
+    "source_file": "ac_level2_troubleshooting.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "1.8",
+      "charging_type": "ACLEVEL2",
+      "dtc_code": "P1E10",
+      "source": "/app/data/charging_docs/ac_level2_troubleshooting.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_b374c44dd7b4",
+    "text": "## J1772 Pilot Signal Troubleshooting\n\nThe pilot signal is a 1kHz PWM signal between EVSE and vehicle that negotiates charging current.\n\n| Pilot Signal | Meaning | Action |\n|-------------|---------|--------|\n| +12V DC static | EVSE ready, no vehicle connected | Check charge port latch sensor |\n| +9V / -12V PWM | EVSE ready, vehicle connected | Normal — charge should start |\n| +6V / -12V PWM | EVSE ready, vehicle charging | Normal — charging active |\n| 0V | EVSE fault or no power | Check EVSE breaker, GFCI |\n| -12V static | EVSE error state | Reset EVSE |",
+    "document_id": "doc_f15020d9230f",
+    "source_file": "ac_level2_troubleshooting.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "1.8",
+      "charging_type": "ACLEVEL2",
+      "dtc_code": "P1E10",
+      "source": "/app/data/charging_docs/ac_level2_troubleshooting.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_ed642b9662a0",
+    "text": "## Common AC Level 2 Issues\n\n### Issue: Charging Not Starting\n1. Check EVSE circuit breaker (40A minimum for 32A EVSE)\n2. Check GFCI outlet if using Level 2 adapter\n3. Verify pilot signal is PWM (not +12V static)\n4. Ensure charge port door is fully closed\n5. Check DTC P1E10 (OBC Communication Failure)\n6. Try scheduling charge via app (some EVSEs have delayed start by default)\n\n### Issue: Charging Stops After a Few Minutes\n1. Check for thermal events (BMS_TEMP_HIGH)\n2. Verify EVSE ground fault — common with older home wiring\n3. Check DTC B2AAA (system error during charge)\n4. Inspect OBC cooling — OBC has its own cooling circuit on EV-5000",
+    "document_id": "doc_f15020d9230f",
+    "source_file": "ac_level2_troubleshooting.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "1.8",
+      "charging_type": "ACLEVEL2",
+      "dtc_code": "P1E10",
+      "source": "/app/data/charging_docs/ac_level2_troubleshooting.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_3a1191daca55",
+    "text": "### Issue: Slow Charging Speed\n1. Verify EVSE amperage rating — many 7.2kW EVSEs are limited to 30A\n2. Check OBC amperage setting: Settings > Charging > Max Charge Current\n3. Confirm three-phase EVSE for 22kW OBC\n4. Cold battery will limit charging speed (pre-condition battery first)",
+    "document_id": "doc_f15020d9230f",
+    "source_file": "ac_level2_troubleshooting.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "1.8",
+      "charging_type": "ACLEVEL2",
+      "dtc_code": "P1E10",
+      "source": "/app/data/charging_docs/ac_level2_troubleshooting.md",
+      "file_type": "md",
+      "chunk_index": 3
+    }
+  },
+  {
+    "chunk_id": "chunk_c5786c6031df",
+    "text": "# CCS DC Fast Charging Procedure\n**Document:** CHG-CCS-001 | **Version:** 2.3 | **Platform:** EV-3000, EV-5000\n\n## Overview\nCombined Charging System (CCS2 / Combo2) enables DC fast charging at up to 150kW on the EV-3000 platform and 250kW on EV-5000. Uses ISO 15118 PLC communication protocol.\n\n## Supported Charging Standards\n- **CCS2 (Combined Charging System Type 2):** Primary DC fast charge standard\n- **ISO 15118:** Vehicle-to-EVSE digital communication (Plug & Charge enabled)\n- **DIN 70121:** Fallback protocol for older EVSE\n- **CHAdeMO:** NOT supported on EV-3000/5000 platforms",
+    "document_id": "doc_778b511e7455",
+    "source_file": "ccs_charging_procedure.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "charging",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.3",
+      "charging_type": "CCS",
+      "dtc_code": "P1E00",
+      "source": "/app/data/charging_docs/ccs_charging_procedure.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_b7c4d16c5022",
+    "text": "## Charging Procedure\n\n### Step 1: Pre-Charge Checks\n1. Verify SoC is above 5% (vehicle will not accept charge below 2%)\n2. Check for active DTCs related to charging (P1E00, P1E10)\n3. Ensure charge port latch is clean and undamaged\n4. Battery temperature should be above 5°C for DC fast charging\n\n### Step 2: EVSE Connection\n1. Insert CCS2 plug into charge port until you hear the latch click\n2. Vehicle will verify EVSE capabilities via PLC within 10 seconds\n3. Charging begins automatically after handshake (≤30 seconds)\n4. Dashboard will show: Charging Active, Target Range, ETA to 80%",
+    "document_id": "doc_778b511e7455",
+    "source_file": "ccs_charging_procedure.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "charging",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.3",
+      "charging_type": "CCS",
+      "dtc_code": "P1E00",
+      "source": "/app/data/charging_docs/ccs_charging_procedure.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_da7d1a8afdd1",
+    "text": "### Step 3: Charging Rates\n| SoC Range | Charging Rate (EV-3000) | Charging Rate (EV-5000) |\n|-----------|------------------------|------------------------|\n| 5-20% | 150kW peak | 250kW peak |\n| 20-80% | 100-150kW | 150-250kW |\n| 80-90% | 50-80kW | 80-120kW |\n| 90-100% | 10-30kW | 20-50kW |\n\n### Step 4: Completing Charge\n1. Charging automatically tapers at 80% SoC\n2. Press Unlock button on fob or app to release plug\n3. Plug will disengage after door handle touch confirmation",
+    "document_id": "doc_778b511e7455",
+    "source_file": "ccs_charging_procedure.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "charging",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.3",
+      "charging_type": "CCS",
+      "dtc_code": "P1E00",
+      "source": "/app/data/charging_docs/ccs_charging_procedure.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_ad3ac703d6e8",
+    "text": "## DTC P1E00 — EVSE Communication Failure\n**Cause:** ISO 15118 / DIN 70121 handshake failure\n**Diagnosis:**\n1. Try different CCS plug on same EVSE\n2. Try different EVSE at same location\n3. Check charge port for moisture or debris\n4. Check for active firmware update (do not charge during OTA)\n5. Verify firmware is 4.0.0 or later (CCS protocol fixes)",
+    "document_id": "doc_778b511e7455",
+    "source_file": "ccs_charging_procedure.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "charging",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.3",
+      "charging_type": "CCS",
+      "dtc_code": "P1E00",
+      "source": "/app/data/charging_docs/ccs_charging_procedure.md",
+      "file_type": "md",
+      "chunk_index": 3
+    }
+  },
+  {
+    "chunk_id": "chunk_b0180fbebf1b",
+    "text": "# EV DTC Diagnostic Trouble Code Catalog\n**Document:** DTC-CAT-001 | **Version:** 4.2 | **Updated with Firmware:** 4.2.1\n\n## DTC Categories\n- **P codes:** Powertrain (battery, motor, charging, BMS)\n- **C codes:** Chassis (brake system, suspension interaction)\n- **B codes:** Body (infotainment, HMI, convenience)\n- **U codes:** Network (CAN bus, module communication)",
+    "document_id": "doc_06bad6a461dc",
+    "source_file": "dtc_catalog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "firmware_version": "4.2",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/dtc_codes/dtc_catalog.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_f0d7268997a9",
+    "text": "## Critical DTC Reference Table\n\n### P0A80 — Replace Hybrid/EV Battery Pack\n- **System:** Battery Management System (BMS)\n- **Severity:** CRITICAL\n- **Trigger:** SoH < 70% OR cell spread > 0.15V\n- **Symptoms:** Reduced range, range estimation inaccurate, possibly reduced performance\n- **Diagnosis Steps:**\n1. Run SoH diagnostic test (35-50 minutes)\n2. Check individual cell voltages for outliers\n3. Inspect thermal management system\n4. Export BMS logs for warranty documentation\n- **Resolution:** Battery pack replacement (warrant claimable < 150,000 miles / 8 years)\n- **Related DTCs:** P0A94 (DC/DC issue may cause false readings)\n- **Firmware Note:** 4.1.0 fixed false positives in temperatures below -10°C",
+    "document_id": "doc_06bad6a461dc",
+    "source_file": "dtc_catalog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "firmware_version": "4.2",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/dtc_codes/dtc_catalog.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_9aa8120134a9",
+    "text": "### P1E00 — EVSE Communication Failure\n- **System:** Charging Control Module (CCM)\n- **Severity:** WARNING\n- **Trigger:** ISO 15118 or DIN 70121 handshake timeout (>30 seconds)\n- **Symptoms:** DC fast charging not starting, charging session aborted\n- **Diagnosis Steps:**\n1. Try different CCS cable on same EVSE\n2. Try different EVSE\n3. Inspect CCS port for moisture or damage\n4. Verify firmware is 4.0.0+ (CCS protocol improvements)\n- **Resolution:** Usually resolved by trying different EVSE. If persistent, CCM module inspection required.",
+    "document_id": "doc_06bad6a461dc",
+    "source_file": "dtc_catalog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "firmware_version": "4.2",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/dtc_codes/dtc_catalog.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_b6eb37bbe5ba",
+    "text": "### P1E10 — On-Board Charger (OBC) Communication Failure\n- **System:** On-Board Charger\n- **Severity:** CRITICAL\n- **Trigger:** Loss of CAN communication with OBC module\n- **Symptoms:** AC Level 2 charging unavailable, possibly DC charging unavailable\n- **Diagnosis Steps:**\n1. Check OBC fuse (F47, 40A in EV junction box)\n2. Inspect OBC CAN bus connector (gray 8-pin connector, passenger side)\n3. Check OBC 12V supply voltage (should be 11-14V)\n4. If fuse OK and CAN OK, OBC module may require replacement\n- **Resolution:** OBC fuse replacement or OBC module replacement",
+    "document_id": "doc_06bad6a461dc",
+    "source_file": "dtc_catalog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "firmware_version": "4.2",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/dtc_codes/dtc_catalog.md",
+      "file_type": "md",
+      "chunk_index": 3
+    }
+  },
+  {
+    "chunk_id": "chunk_a41ccd0f6e02",
+    "text": "### P0A94 — DC/DC Converter Performance\n- **System:** DC/DC Converter (HV to 12V)\n- **Severity:** WARNING\n- **Trigger:** 12V bus voltage < 12.0V during HV conversion\n- **Symptoms:** 12V battery warning light, possible vehicle power-down\n- **Diagnosis Steps:**\n1. Measure 12V battery voltage (should be >12.4V at rest)\n2. Check DC/DC converter fuse (F48, 200A in HV junction box)\n3. Inspect 12V battery for age and condition\n- **Resolution:** 12V battery replacement or DC/DC module service",
+    "document_id": "doc_06bad6a461dc",
+    "source_file": "dtc_catalog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "firmware_version": "4.2",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/dtc_codes/dtc_catalog.md",
+      "file_type": "md",
+      "chunk_index": 4
+    }
+  },
+  {
+    "chunk_id": "chunk_4a63e47eef75",
+    "text": "### P0A1F — Battery Pack Voltage Out of Range\n- **System:** Battery Management System\n- **Severity:** CRITICAL\n- **Trigger:** Pack voltage deviation >5% from expected value for SoC\n- **Symptoms:** Sudden SoC drop, reduced range, possible limp mode\n- **Diagnosis Steps:**\n1. Check individual cell voltages for extreme outliers (>4.25V or <2.8V)\n2. Check contactors for welding (perform contactor test via DiagTool)\n3. Check BMS calibration — recalibrate if last calibration >2 years ago\n- **Resolution:** Cell module replacement or BMS recalibration",
+    "document_id": "doc_06bad6a461dc",
+    "source_file": "dtc_catalog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "firmware_version": "4.2",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/dtc_codes/dtc_catalog.md",
+      "file_type": "md",
+      "chunk_index": 5
+    }
+  },
+  {
+    "chunk_id": "chunk_b52b2b1e7a5f",
+    "text": "### U0100 — Lost Communication With ECM/PCM A (CAN Bus Fault)\n- **System:** Vehicle Control Module (VCM) / CAN Network\n- **Severity:** WARNING\n- **Trigger:** No CAN messages from VCM for >200ms\n- **Symptoms:** Multiple warning lights, possible limp mode, ADAS disabled\n- **Diagnosis Steps:**\n1. Check CAN bus connector at VCM (large white 48-pin connector, center console area)\n2. Test CAN bus resistance — should be 120 ohms between CAN-H and CAN-L\n3. Check for damaged wiring in the main vehicle wiring harness\n4. Check for firmware update (U0100 can appear during OTA update)\n5. Clear DTC and perform ignition cycle test\n- **Resolution:** Wiring repair or VCM firmware reflash",
+    "document_id": "doc_06bad6a461dc",
+    "source_file": "dtc_catalog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "firmware_version": "4.2",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/dtc_codes/dtc_catalog.md",
+      "file_type": "md",
+      "chunk_index": 6
+    }
+  },
+  {
+    "chunk_id": "chunk_56f99e293871",
+    "text": "### B2AAA — Infotainment Module Boot Failure\n- **System:** Infotainment / HMI\n- **Severity:** INFORMATIONAL\n- **Trigger:** Infotainment module failed to boot within 60 seconds\n- **Symptoms:** Black screen on center display, audio unavailable\n- **Diagnosis Steps:**\n1. Perform hard reset: hold Power button 10 seconds\n2. Check infotainment fuse (F22, 10A, interior fuse box)\n3. Check for pending software update causing boot loop\n- **Resolution:** Hard reset (90% of cases). If persistent, factory reset via Settings > System > Factory Reset.",
+    "document_id": "doc_06bad6a461dc",
+    "source_file": "dtc_catalog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "firmware_version": "4.2",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/dtc_codes/dtc_catalog.md",
+      "file_type": "md",
+      "chunk_index": 7
+    }
+  },
+  {
+    "chunk_id": "chunk_966a3c51a330",
+    "text": "# Firmware 4.1.0 — Release Notes and Changelog\n**Version:** 4.1.0 | **Release Date:** 2023-07-20 | **Type:** Minor Update\n**Platform:** EV-3000, EV-5000 | **Mandatory OTA:** NO (recommended)\n\n## Summary\nFirmware 4.1.0 introduces the Adaptive Thermal Management Algorithm v2 (ATMA v2), improved cold-weather performance, and BMS calibration improvements.",
+    "document_id": "doc_9caf9015b77e",
+    "source_file": "firmware_4_1_0_changelog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "4.1.0",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/firmware_updates/firmware_4_1_0_changelog.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_69740bba46ed",
+    "text": "## New Features\n\n### ATMA v2 — Adaptive Thermal Management Algorithm v2\n- Dynamic coolant pump speed control (previously fixed 3-speed, now continuously variable 150-3500 RPM)\n- Pre-conditioning: Battery automatically pre-heats/cools to 20-30°C when DC fast charging is initiated via navigation or app\n- Predictive cooling during high-performance driving based on route gradient\n- Improved BMS cell balancing during thermal events\n\n### Cold Weather Improvements\n- P0A80 false positive fix: DTC P0A80 was incorrectly triggered below -10°C due to reduced apparent capacity. Fixed with temperature-compensated SoH calculation.\n- Range estimation accuracy improved by 8% in temperatures below -5°C\n- Pre-conditioning via app now available without active charging session",
+    "document_id": "doc_9caf9015b77e",
+    "source_file": "firmware_4_1_0_changelog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "4.1.0",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/firmware_updates/firmware_4_1_0_changelog.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_34db4f222b57",
+    "text": "## Bug Fixes\n- Fixed: U0100 intermittent during OBC initialization (reduced from 0.3% occurrence to 0.02%)\n- Fixed: DC/DC converter efficiency drop above 45°C ambient (P0A94 false trigger)\n- Fixed: Cell balancing stuck in loop after 48 hours of storage\n\n## Known Issues\n- None at time of release",
+    "document_id": "doc_9caf9015b77e",
+    "source_file": "firmware_4_1_0_changelog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "4.1.0",
+      "charging_type": "DCFAST",
+      "dtc_code": "P0A80",
+      "source": "/app/data/firmware_updates/firmware_4_1_0_changelog.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_cac71c76ddb2",
+    "text": "# Firmware 4.2.1 — Release Notes and Changelog\n**Version:** 4.2.1 | **Release Date:** 2024-01-15 | **Type:** Minor Update + Critical Bug Fix\n**Platform:** EV-3000, EV-5000 | **Mandatory OTA:** YES (within 90 days)\n\n## Summary\nFirmware 4.2.1 includes critical fixes for CCS charging handshake stability, a battery thermal management improvement, and an OTA delivery reliability improvement.",
+    "document_id": "doc_452f6b16561a",
+    "source_file": "firmware_4_2_1_changelog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "4.2.1",
+      "charging_type": "CCS",
+      "dtc_code": "P1E00",
+      "source": "/app/data/firmware_updates/firmware_4_2_1_changelog.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_89ecda38561c",
+    "text": "## Critical Fixes\n\n### [CRITICAL] CCS Charging Handshake Stability Fix\n- **Issue:** Some EV-3000 vehicles experienced P1E00 after OTA 4.2.0 update\n- **Root cause:** ISO 15118 TLS handshake timeout regression in 4.2.0 (30s → 15s unintentionally)\n- **Fix:** Restored ISO 15118 TLS timeout to 30 seconds. Added DIN 70121 fallback retry logic\n- **DTC resolved:** P1E00 (EVSE Communication Failure)\n- **Affected builds:** 4.2.0 only\n\n### [CRITICAL] OTA Delivery Reliability\n- **Issue:** OTA_INSTALL_FAIL_3 (checksum mismatch) occurring on vehicles with intermittent WiFi\n- **Root cause:** Partial firmware package download without retry logic\n- **Fix:** Added 3-retry download with chunk-based validation\n- **Error resolved:** OTA_INSTALL_FAIL_3",
+    "document_id": "doc_452f6b16561a",
+    "source_file": "firmware_4_2_1_changelog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "4.2.1",
+      "charging_type": "CCS",
+      "dtc_code": "P1E00",
+      "source": "/app/data/firmware_updates/firmware_4_2_1_changelog.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_407a996c3e85",
+    "text": "## Improvements\n- CAN bus message prioritization for charging control (reduces U0100 during charge start)\n- BMS cold-weather SoC estimation accuracy +3% below -5°C\n- Regen braking thermal prediction update (ATMA v2.1)\n- OTA UI: Added detailed progress percentage display (was binary start/complete)\n\n## Known Issues in 4.2.1\n- AC Level 2 charging may show incorrect time-to-full on 3-phase 22kW EVSE (cosmetic only, actual charging is correct)\n- Navigation map tiles may load slowly for 30 seconds after cold boot (fix in 4.3.0)",
+    "document_id": "doc_452f6b16561a",
+    "source_file": "firmware_4_2_1_changelog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "4.2.1",
+      "charging_type": "CCS",
+      "dtc_code": "P1E00",
+      "source": "/app/data/firmware_updates/firmware_4_2_1_changelog.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_9ee5a870b5b7",
+    "text": "## Installation\n- **OTA:** Settings > Software Update > Check for Updates\n- **Manual:** Via USB drive (contact support for USB package)\n- **Estimated install time:** 18-25 minutes\n- **Downtime:** Vehicle unavailable during installation\n- **Rollback:** Rollback to 4.2.0 available for 72 hours via DiagTool Pro",
+    "document_id": "doc_452f6b16561a",
+    "source_file": "firmware_4_2_1_changelog.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "4.2.1",
+      "charging_type": "CCS",
+      "dtc_code": "P1E00",
+      "source": "/app/data/firmware_updates/firmware_4_2_1_changelog.md",
+      "file_type": "md",
+      "chunk_index": 3
+    }
+  },
+  {
+    "chunk_id": "chunk_3d0ce0c03118",
+    "text": "# OTA Update 4.2.1 — Customer Release Notes\n**For:** EV Owners | **Version:** 4.2.1 | **Size:** 1.2 GB | **Time:** ~20 minutes\n\n## What's New in This Update?\n\nThis update improves your charging experience and makes your software update process more reliable.\n\n## Charging Improvements\nWe've fixed an issue where some vehicles had trouble connecting to DC fast chargers after the previous update. If you experienced error code P1E00 or couldn't start a DC fast charging session, this update resolves that issue.\n\n## Software Update Reliability\nWe've improved the update download process so it's more reliable on lower-quality WiFi connections. The new update process verifies each chunk of the download before proceeding, preventing partial update failures.",
+    "document_id": "doc_c25c522726fd",
+    "source_file": "ota_4_2_1_release_notes.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "firmware_version": "4.2.1",
+      "charging_type": "DCFAST",
+      "dtc_code": "P1E00",
+      "source": "/app/data/ota_release_notes/ota_4_2_1_release_notes.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_a5bd9dcdb867",
+    "text": "## How to Install\n1. Connect to WiFi with good signal strength\n2. Go to Settings > Software > Software Update\n3. Tap \"Download and Install\"\n4. Your vehicle needs to be in Park with 20%+ charge\n5. The update takes about 18-25 minutes\n6. Vehicle will restart once during the process — this is normal\n\n## If Your Update Fails\nIf you see error OTA_INSTALL_FAIL_3:\n1. Try connecting to a stronger WiFi network\n2. Go to Settings > Software > Retry Update\n3. If the issue persists, contact EV Support",
+    "document_id": "doc_c25c522726fd",
+    "source_file": "ota_4_2_1_release_notes.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "firmware_version": "4.2.1",
+      "charging_type": "DCFAST",
+      "dtc_code": "P1E00",
+      "source": "/app/data/ota_release_notes/ota_4_2_1_release_notes.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_1f646091cd93",
+    "text": "# Battery Diagnostic – DTC P0A80\n\n**Vehicle Model:** XYZ Model S\n**Diagnostic Category:** battery\n**DTC Code:** P0A80\n\n## Description\nP0A80 indicates **Replace Hybrid/EV Battery Pack** – high-voltage battery module performance deviation detected by the BMS.",
+    "document_id": "doc_8b51b6bbf5b1",
+    "source_file": "battery_dtc_p0a80.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ Model",
+      "dtc_code": "P0A80",
+      "source": "/app/data/sample_ev_docs/battery_dtc_p0a80.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_f0d489b6a91c",
+    "text": "## Troubleshooting Steps\n\n### Step 1: Confirm DTC and freeze frame\n1. Read DTC with OEM scan tool; verify P0A80 is current (not history only).\n2. Record SOC, cell delta voltage, and max cell temperature from freeze frame.\n\n### Step 2: Isolation and contactor check\n1. Perform HV isolation test per workshop manual section HV-12.\n2. Verify main contactors open/close within specification (resistance < 5 mΩ).\n\n### Step 3: Cell imbalance assessment\n- If max cell delta > 150 mV at rest: schedule battery module balance procedure BM-07.\n- If delta > 300 mV: do not fast-charge; arrange battery engineering review.\n\n### Step 4: Customer communication\nInform customer that P0A80 requires dealer inspection; do not clear DTC without completed repair validation drive cycle.",
+    "document_id": "doc_8b51b6bbf5b1",
+    "source_file": "battery_dtc_p0a80.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ Model",
+      "dtc_code": "P0A80",
+      "source": "/app/data/sample_ev_docs/battery_dtc_p0a80.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_b79b096cfe16",
+    "text": "## Related Codes\nP0A7F (battery weak), P1B00 (thermal derate active)",
+    "document_id": "doc_8b51b6bbf5b1",
+    "source_file": "battery_dtc_p0a80.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "battery",
+      "vehicle_model": "XYZ Model",
+      "dtc_code": "P0A80",
+      "source": "/app/data/sample_ev_docs/battery_dtc_p0a80.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_6eaa422eae2d",
+    "text": "# EV Charging Failure After OTA Update\n\n**Vehicle Model:** XYZ Model E\n**Firmware Version:** 4.2.1\n**Diagnostic Category:** charging\n**Charging Type:** CCS\n\n## Symptom\nVehicle does not initiate DC fast charging after completing OTA firmware update 4.2.1. Charge port LED blinks amber; infotainment shows \"Charging unavailable – schedule service if persistent.\"",
+    "document_id": "doc_e90b9bb84543",
+    "source_file": "charging_failure_after_ota.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "charging",
+      "vehicle_model": "XYZ Model",
+      "firmware_version": "4.2.1",
+      "charging_type": "CCS",
+      "source": "/app/data/sample_ev_docs/charging_failure_after_ota.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_8a088cb699bf",
+    "text": "## Procedure\n\n### Step 1: Verify charge port and cable\n1. Inspect CCS inlet for debris, moisture, or bent pins.\n2. Reseat the DC fast charge connector until the latch clicks.\n3. Retry on a known-good CCS station (minimum 50 kW).\n\n### Step 2: Soft reset charging ECU\n1. Shift to Park, power off vehicle for 2 minutes.\n2. Power on without plugging in; wait 30 seconds.\n3. Plug in and confirm charge session starts within 60 seconds.\n\n### Step 3: Re-apply charging profile (FW 4.2.1)\n1. Connect to workshop diagnostic tool.\n2. Navigate: **Body > Charging > Reset charge profile**.\n3. Apply service bulletin SB-CHG-0421 patch if profile version is below 4.2.1-C.\n\n### Step 4: Escalation\nIf charging still fails, capture DTCs and escalate to Tier-2 with VIN, OTA build, and station ID.",
+    "document_id": "doc_e90b9bb84543",
+    "source_file": "charging_failure_after_ota.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "charging",
+      "vehicle_model": "XYZ Model",
+      "firmware_version": "4.2.1",
+      "charging_type": "CCS",
+      "source": "/app/data/sample_ev_docs/charging_failure_after_ota.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_4abe0e570af7",
+    "text": "## Safety\nDo not bypass interlocks or modify high-voltage components without HV certification.",
+    "document_id": "doc_e90b9bb84543",
+    "source_file": "charging_failure_after_ota.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "charging",
+      "vehicle_model": "XYZ Model",
+      "firmware_version": "4.2.1",
+      "charging_type": "CCS",
+      "source": "/app/data/sample_ev_docs/charging_failure_after_ota.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_b0642297487d",
+    "text": "# DC Fast Charging (CCS) Troubleshooting Guide\n\n**Charging Type:** CCS\n**Diagnostic Category:** charging",
+    "document_id": "doc_6db5ae7b9ec0",
+    "source_file": "dc_fast_charging_ccs_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "charging",
+      "charging_type": "DCFAST",
+      "dtc_code": "P1B00",
+      "source": "/app/data/sample_ev_docs/dc_fast_charging_ccs_guide.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_c7075cc32ec5",
+    "text": "## Common Issues\n\n### Issue: Session starts then stops within 2 minutes\n**Likely causes:** Battery thermal derate, payment handshake failure, incompatible station firmware.\n\n**Resolution:**\n1. Check battery inlet temperature; if > 45°C, advise cooldown 15 minutes.\n2. Retry with alternate CCS stall.\n3. If repeat failure, pull logs: `Charging > Session log > Export last 3 sessions`.\n\n### Issue: \"Incompatible charger\" message\n1. Confirm vehicle supports CCS Combo 1 (North America) or Combo 2 (EU) per build sheet.\n2. Verify station is CCS (not CHAdeMO-only).\n\n### Issue: Reduced charge rate below 50 kW on capable station\n1. Check SOC; ramp tapers above 80% SOC by design.\n2. Review BMS derate flags for P1B00 thermal active.",
+    "document_id": "doc_6db5ae7b9ec0",
+    "source_file": "dc_fast_charging_ccs_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "charging",
+      "charging_type": "DCFAST",
+      "dtc_code": "P1B00",
+      "source": "/app/data/sample_ev_docs/dc_fast_charging_ccs_guide.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_cab7fdb66e8b",
+    "text": "## Technical Reference\n- Max DC current (Model E): 500 A peak, 10 min\n- Port pinout: CCS pins 1-7 per ISO 15118",
+    "document_id": "doc_6db5ae7b9ec0",
+    "source_file": "dc_fast_charging_ccs_guide.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "charging",
+      "charging_type": "DCFAST",
+      "dtc_code": "P1B00",
+      "source": "/app/data/sample_ev_docs/dc_fast_charging_ccs_guide.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_151bc9d3ef3b",
+    "text": "# Firmware OTA Update Recovery Procedure\n\n**Firmware Version:** 4.2.x\n**Diagnostic Category:** firmware\n\n## When to Use\nCustomer reports failed OTA, vehicle stuck on \"Update paused\", or repeated rollback to previous build.",
+    "document_id": "doc_11583498a13e",
+    "source_file": "firmware_ota_recovery.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "firmware_version": "4.2",
+      "source": "/app/data/sample_ev_docs/firmware_ota_recovery.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_b1021b87c05b",
+    "text": "## Recovery Steps\n\n### Step 1: Preconditions\n- Vehicle SOC must be between 40% and 80%.\n- Connect to stable Wi-Fi or cellular with > 10 Mbps.\n- Parking brake engaged, vehicle in Park.\n\n### Step 2: Clear OTA cache\n1. Infotainment: **Settings > System > Software > Clear download cache**.\n2. Restart infotainment (hold power 10 sec).\n\n### Step 3: Manual OTA retry\n1. **Settings > System > Software > Check for updates**.\n2. If update 4.2.1 available, download on Wi-Fi only.\n3. Do not drive during install; expect 25–45 minutes.\n\n### Step 4: Workshop recovery (failed twice)\n1. Connect diagnostic tool; run **OTA > Force recovery mode**.\n2. Apply package OTA-4.2.1-REC from secure service portal.\n3. Validate all ECUs report matching version post-install.",
+    "document_id": "doc_11583498a13e",
+    "source_file": "firmware_ota_recovery.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "firmware_version": "4.2",
+      "source": "/app/data/sample_ev_docs/firmware_ota_recovery.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_1385e833dbe2",
+    "text": "## Post-Update Validation\n- Verify charging profile version ≥ 4.2.1-C\n- Clear history DTCs after 10 min power cycle",
+    "document_id": "doc_11583498a13e",
+    "source_file": "firmware_ota_recovery.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "firmware_version": "4.2",
+      "source": "/app/data/sample_ev_docs/firmware_ota_recovery.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_63012ff30ff8",
+    "text": "# Infotainment – Blank Screen / HMI Reset\n\n**Diagnostic Category:** infotainment\n**Vehicle Model:** XYZ Model X\n\n## Symptoms\nCenter display blank after startup, touch unresponsive, or cyclic reboot during drive.\n\n## Procedure\n\n### Step 1: Hard reset HMI\n1. Press and hold steering-wheel voice + volume-up for 12 seconds until logo appears.\n2. Allow 3-minute reboot; do not shift out of Park during reset.\n\n### Step 2: Check fuses (workshop)\n- Fuse F42 (HMI power) in cabin fuse box – replace if open.\n\n### Step 3: Software recovery\n1. Diagnostic tool: **Infotainment > Reload UI bundle**.\n2. If build < 3.8.0, apply patch INF-380-HF before release.\n\n### Step 4: Escalation\nPersistent blank screen after two resets requires HMI module replacement per RMA workflow INF-RMA-01.",
+    "document_id": "doc_dc9100e43d32",
+    "source_file": "infotainment_screen_blank.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "firmware",
+      "vehicle_model": "XYZ Model",
+      "firmware_version": "3.8.0",
+      "source": "/app/data/sample_ev_docs/infotainment_screen_blank.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_e272ff4a997a",
+    "text": "# CAN Bus Troubleshooting Guide — EV Platform\n**Document:** SM-CAN-002 | **Version:** 2.1\n\n## EV CAN Bus Architecture\nThe EV-3000/5000 uses a dual CAN bus architecture:\n- **High-Speed CAN (HS-CAN):** 500 kbps — VCM, BMS, MCU, CCM, ADAS\n- **Low-Speed CAN (LS-CAN):** 125 kbps — Body control, comfort, infotainment",
+    "document_id": "doc_f2a33fe44820",
+    "source_file": "can_bus_troubleshooting.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.1",
+      "dtc_code": "U0100",
+      "source": "/app/data/service_manuals/can_bus_troubleshooting.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_9fe8ea02d8c3",
+    "text": "## U0100 — Lost Communication With ECM/PCM A\n**Trigger:** VCM stops sending CAN messages for >200ms",
+    "document_id": "doc_f2a33fe44820",
+    "source_file": "can_bus_troubleshooting.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.1",
+      "dtc_code": "U0100",
+      "source": "/app/data/service_manuals/can_bus_troubleshooting.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_062d0cbcd518",
+    "text": "### Diagnosis Flowchart\n1. **Read all DTCs first** — Multiple CAN DTCs indicate bus-level failure vs. single-module failure\n2. **Check CAN bus resistance:**\n- Disconnect battery 12V negative\n- Measure resistance between CAN-H and CAN-L at OBD-II port (pins 6 and 14)\n- Expected: 60 ohms (two 120-ohm termination resistors in parallel)\n- If >60 ohms: Missing termination resistor (check VCM or BMS CAN terminator)\n- If <60 ohms: Short circuit in CAN wiring\n3. **Check VCM supply voltage:**\n- VCM main supply: 11-14V from Battery Junction Box\n- VCM KL30 supply should not drop below 10V during cranking\n4. **Check for firmware OTA in progress** — U0100 may appear transiently during update",
+    "document_id": "doc_f2a33fe44820",
+    "source_file": "can_bus_troubleshooting.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.1",
+      "dtc_code": "U0100",
+      "source": "/app/data/service_manuals/can_bus_troubleshooting.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_481c9dd11b91",
+    "text": "- VCM KL30 supply should not drop below 10V during cranking\n4. **Check for firmware OTA in progress** — U0100 may appear transiently during update\n5. **VCM firmware reflash:** If all wiring and power is OK, reflash VCM via DiagTool Pro > Modules > VCM > Reflash",
+    "document_id": "doc_f2a33fe44820",
+    "source_file": "can_bus_troubleshooting.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "2.1",
+      "dtc_code": "U0100",
+      "source": "/app/data/service_manuals/can_bus_troubleshooting.md",
+      "file_type": "md",
+      "chunk_index": 3
+    }
+  },
+  {
+    "chunk_id": "chunk_9c59a41344b5",
+    "text": "# High-Voltage Service Procedures — EV-3000 / EV-5000\n**Document:** SM-HV-001 | **Version:** 5.0 | **Classification:** TECHNICIAN ONLY\n**WARNING: HIGH-VOLTAGE PROCEDURES — CERTIFIED EV TECHNICIANS ONLY**\n\n## Safety Requirements\n**MANDATORY PPE for all HV procedures:**\n- Class 0 insulated rubber gloves (1000V rated), tested within 6 months\n- Safety glasses or face shield\n- HV-rated insulated hand tools (1000V rated, red handle with VDE symbol)\n- High-visibility, non-conductive safety footwear\n- Cotton or natural fiber clothing only — no synthetic materials\n\n**MANDATORY LOCK OUT / TAG OUT (LOTO):**\n- Apply LOTO device to manual service disconnect before any HV work\n- Verify isolation with CAT III or CAT IV multimeter rated for > 1000V DC",
+    "document_id": "doc_17659a869ef6",
+    "source_file": "ev_hv_service_procedures.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "5.0",
+      "source": "/app/data/service_manuals/ev_hv_service_procedures.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_6ace3e852b49",
+    "text": "## Manual Service Disconnect (MSD) Procedure\n\n### Location\n- **EV-3000:** Rear trunk, lift trunk floor mat, remove plastic cover — orange MSD handle visible\n- **EV-5000:** Under rear seat, remove seat cushion using T40 Torx — orange MSD handle under foam pad",
+    "document_id": "doc_17659a869ef6",
+    "source_file": "ev_hv_service_procedures.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "5.0",
+      "source": "/app/data/service_manuals/ev_hv_service_procedures.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_0903f5d33b79",
+    "text": "### Procedure\n**Step 1:** Power off vehicle completely — remove key fob from vehicle vicinity (minimum 10 feet)\n**Step 2:** Open hood / trunk as per vehicle model (see location above)\n**Step 3:** Wait minimum **5 minutes** for HV capacitors to discharge\n**Step 4:** Put on Class 0 insulated gloves\n**Step 5:** Locate orange MSD handle — DO NOT touch adjacent orange HV cables\n**Step 6:** Pull MSD handle UPWARD firmly with both hands until it disengages (approximately 30 lbs pull force)\n**Step 7:** Verify isolation: measure voltage between HV+ (red) and HV- (black) terminals using CAT III multimeter — MUST read < 60V DC before proceeding\n**Step 8:** Apply LOTO device to MSD port\n**Step 9:** Tag vehicle: \"HV ISOLATED — DO NOT ENERGIZE\"",
+    "document_id": "doc_17659a869ef6",
+    "source_file": "ev_hv_service_procedures.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "5.0",
+      "source": "/app/data/service_manuals/ev_hv_service_procedures.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_9cce014706d6",
+    "text": "### MSD Re-engagement\n**Step 1:** Remove LOTO device\n**Step 2:** Align MSD connector and push DOWN firmly until you hear and feel a click\n**Step 3:** Verify all tools and personnel are clear of HV areas\n**Step 4:** Power on vehicle and check for HV-related DTCs",
+    "document_id": "doc_17659a869ef6",
+    "source_file": "ev_hv_service_procedures.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "5.0",
+      "source": "/app/data/service_manuals/ev_hv_service_procedures.md",
+      "file_type": "md",
+      "chunk_index": 3
+    }
+  },
+  {
+    "chunk_id": "chunk_d6e1e5e9ea9f",
+    "text": "## HV Battery Inspection (Visual Only)\n**WARNING: Do NOT open battery pack enclosure in field — workshop environment only.**\n\nAllowed field inspection:\n- Inspect battery pack mounting bolts for looseness\n- Check HV cables for visible damage, chafing, or heat discoloration\n- Check HV cable connectors for secure locking (orange lever fully seated)\n- Inspect battery coolant hose connections for leaks (look for orange coolant residue)",
+    "document_id": "doc_17659a869ef6",
+    "source_file": "ev_hv_service_procedures.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "EV-3000",
+      "firmware_version": "5.0",
+      "source": "/app/data/service_manuals/ev_hv_service_procedures.md",
+      "file_type": "md",
+      "chunk_index": 4
+    }
+  },
+  {
+    "chunk_id": "chunk_dfcf84a0774d",
+    "text": "# Field Technician Notes — MSD Procedure\n**Author:** Senior EV Technician Team | **Last Updated:** 2024-01-10",
+    "document_id": "doc_07cf4c1485eb",
+    "source_file": "msd_procedure_notes.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "XYZ LOTO",
+      "source": "/app/data/technician_notes/msd_procedure_notes.md",
+      "file_type": "md",
+      "chunk_index": 0
+    }
+  },
+  {
+    "chunk_id": "chunk_6e5486373cc9",
+    "text": "## Common MSD Mistakes (Lessons Learned)\n\n### Mistake 1: Not waiting the full 5 minutes\nDo not rush the capacitor discharge period. We had an incident where a tech attempted to test voltage at 3 minutes and measured 180V. Wait the FULL 5 minutes. In cold weather (<0°C), wait 8 minutes — capacitors discharge slower in cold.\n\n### Mistake 2: Touching orange HV cables\nThe orange cables near the MSD are ALWAYS live even with MSD pulled if you haven't isolated upstream. Never touch orange-colored cables or components without verifying isolation.",
+    "document_id": "doc_07cf4c1485eb",
+    "source_file": "msd_procedure_notes.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "XYZ LOTO",
+      "source": "/app/data/technician_notes/msd_procedure_notes.md",
+      "file_type": "md",
+      "chunk_index": 1
+    }
+  },
+  {
+    "chunk_id": "chunk_09c288b34778",
+    "text": "### Mistake 3: Not verifying isolation with multimeter\nAlways verify with a CAT III multimeter. We've had cases where the MSD was pulled but the 12V to HV contactor coil was still energized, keeping the contactor closed. Voltage check is NON-NEGOTIABLE.\n\n### Mistake 4: Wrong LOTO device\nUse only EV-approved LOTO devices. Standard mechanical padlocks on MSD can crack the plastic housing. Use the XYZ LOTO-EV kit (Part No: XYZ-LOTO-001).",
+    "document_id": "doc_07cf4c1485eb",
+    "source_file": "msd_procedure_notes.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "XYZ LOTO",
+      "source": "/app/data/technician_notes/msd_procedure_notes.md",
+      "file_type": "md",
+      "chunk_index": 2
+    }
+  },
+  {
+    "chunk_id": "chunk_6efc79cda1e5",
+    "text": "## Tips for EV-5000 MSD Access\nThe EV-5000 rear seat MSD access is tricky. The seat cushion uses 3 plastic clips at the front edge. Lift from the front — do NOT pull from the rear or you'll break the rear clips. Use a plastic trim removal tool (never metal).\n\n## After MSD Re-engagement\nAfter re-engaging MSD, always do the following before handing vehicle back:\n1. Clear all DTCs (MSD pull generates DTCs)\n2. Perform HV system self-test: DiagTool > System Tests > HV Integrity Check\n3. Verify charge port works with a Level 2 test charge (minimum 5 minutes)\n4. Document in vehicle service record",
+    "document_id": "doc_07cf4c1485eb",
+    "source_file": "msd_procedure_notes.md",
+    "metadata": {
+      "document_source": "enterprise_upload",
+      "diagnostic_category": "general",
+      "vehicle_model": "XYZ LOTO",
+      "source": "/app/data/technician_notes/msd_procedure_notes.md",
+      "file_type": "md",
+      "chunk_index": 3
+    }
+  }
+]
