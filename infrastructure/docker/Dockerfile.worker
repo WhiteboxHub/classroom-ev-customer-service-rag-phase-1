@@ -1,0 +1,36 @@
+# ==============================================================
+# EV RAG Platform — Celery Worker Production Dockerfile
+# ==============================================================
+
+FROM python:3.11-slim
+
+LABEL org.opencontainers.image.title="EV RAG Celery Worker"
+LABEL org.opencontainers.image.description="Async document ingestion and embedding worker"
+LABEL org.opencontainers.image.vendor="XYZ EV Corp"
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app/ ./app/
+COPY data/ ./data/
+
+# Security: non-root user
+RUN adduser --disabled-password --gecos '' evrag && chown -R evrag:evrag /app
+USER evrag
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Celery worker with separate queues
+CMD ["celery", "-A", "app.workers.celery_app", "worker", \
+     "--loglevel=INFO", \
+     "--queues=ingestion,embedding,sync,celery", \
+     "--concurrency=4", \
+     "--max-tasks-per-child=100"]

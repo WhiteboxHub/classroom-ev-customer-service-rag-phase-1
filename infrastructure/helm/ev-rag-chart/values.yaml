@@ -1,0 +1,112 @@
+# ==============================================================
+# EV RAG Platform — Helm Chart Values
+# Production-grade EV troubleshooting RAG platform
+# ==============================================================
+
+replicaCount: 2
+
+image:
+  repository: xyz-ev-corp/ev-rag-backend
+  pullPolicy: IfNotPresent
+  tag: "1.0.0"
+
+workerImage:
+  repository: xyz-ev-corp/ev-rag-worker
+  pullPolicy: IfNotPresent
+  tag: "1.0.0"
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+  hosts:
+    - host: ev-rag.xyz-ev-corp.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: ev-rag-tls
+      hosts:
+        - ev-rag.xyz-ev-corp.com
+
+resources:
+  api:
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  worker:
+    limits:
+      cpu: 4000m
+      memory: 8Gi
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+env:
+  OPENAI_MODEL: gpt-4o-mini
+  EMBEDDING_MODEL: sentence-transformers/all-MiniLM-L6-v2
+  MILVUS_COLLECTION: ev_troubleshooting
+  CHUNK_SIZE: "800"
+  CHUNK_OVERLAP: "150"
+  LOG_LEVEL: INFO
+  LANGFUSE_ENABLED: "false"
+  OTEL_ENABLED: "false"
+  DEFAULT_TENANT: ev_technicians
+
+secrets:
+  openaiApiKey: ""
+  langfusePublicKey: ""
+  langfuseSecretKey: ""
+  postgresPassword: ""
+
+milvus:
+  enabled: true
+  host: milvus
+  port: 19530
+
+redis:
+  enabled: true
+  host: redis
+  port: 6379
+
+postgres:
+  enabled: true
+  host: postgres
+  port: 5432
+  database: evragdb
+
+workers:
+  ingestion:
+    replicas: 2
+    concurrency: 4
+  embedding:
+    replicas: 1
+    concurrency: 2
+  sync:
+    replicas: 1
+    concurrency: 1
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8000"
+  prometheus.io/path: "/metrics"
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

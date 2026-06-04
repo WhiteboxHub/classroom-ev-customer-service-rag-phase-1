@@ -1,0 +1,15 @@
+apiVersion: v2
+name: ev-rag-chart
+description: Helm chart for the EV RAG Platform — Enterprise EV Troubleshooting RAG System
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - rag
+  - ev
+  - milvus
+  - redis
+  - fastapi
+maintainers:
+  - name: EV Platform Engineering Team
+    email: ev-platform@xyz-ev-corp.com

@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+data/uploads/*
+!data/uploads/.gitkeep
+data/bm25_index.json
+*.log
+.pytest_cache/
+.mypy_cache/
+.DS_Store
+_study_guide_extract.txt

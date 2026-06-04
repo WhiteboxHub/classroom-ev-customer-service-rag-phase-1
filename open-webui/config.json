@@ -1,0 +1,15 @@
+{
+  "title": "EV RAG Troubleshooting Assistant",
+  "description": "Enterprise EV troubleshooting platform powered by XYZ EV Corp RAG system",
+  "api_base_url": "http://gateway:80/api/v1",
+  "openai_api_base": "http://gateway:80/api/v1",
+  "openai_api_key": "sk-ev-rag-internal",
+  "default_model": "gpt-4o-mini",
+  "welcome_message": "Welcome to the EV Troubleshooting Assistant. Ask me about DTCs, charging issues, OTA updates, and battery diagnostics.",
+  "system_prompt": "You are an EV troubleshooting specialist assistant powered by XYZ EV Corp RAG platform.",
+  "features": {
+    "show_sources": true,
+    "show_latency": true,
+    "enable_feedback": true
+  }
+}
